@@ -39,7 +39,7 @@ def command_prefixes(bot, message):
 # rosa invite https://discordapp.com/api/oauth2/authorize?client_id=720741045008072704&permissions=2146827601&scope=bot
 
 
-class ToxelBot(commands.Bot):
+class KooperBot(commands.Bot):
     def __init__(self):
         super().__init__(command_prefix=command_prefixes)
 
@@ -64,7 +64,7 @@ class ToxelBot(commands.Bot):
         self.wfm.pop(uid, None)
 
 
-bot = ToxelBot()
+bot = KooperBot()
 
 # @bot.check
 # async def debug_restrict_jacob(ctx):

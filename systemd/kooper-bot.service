@@ -1,0 +1,12 @@
+[Unit]
+Description=Kooper discord.py bot
+
+[Service]
+User=jacob
+Environment=CONFIG_PATH=/home/jacob/discord/bots/kooper/bot/config_kooper.json
+WorkingDirectory=/home/jacob/discord/bots/kooper/
+ExecStart=/home/jacob/.local/bin/pipenv run python3 -u /home/jacob/discord/bots/kooper/bot/main.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
