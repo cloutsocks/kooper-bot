@@ -20,8 +20,8 @@ initial_extensions = (
     'error',
     'config',
     'misc',
-    'mod'
-    # 'mystery',
+    'mod',
+    'actor'
 )
 
 

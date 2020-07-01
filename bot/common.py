@@ -8,6 +8,7 @@ import discord
 from datetime import datetime, timedelta
 
 idPattern = re.compile(r'<@!?(\d+?)>')
+cn_id_pattern = re.compile(r'<#([0-9]+)>')
 emojiPattern = u'(?:[\U00002600-\U000027BF])|(?:[\U0001f300-\U0001f64F])|(?:[\U0001f680-\U0001f6FF])'
 customEmojiPattern = r'<.?:(?:.+?):(?:\d+?)>'
 

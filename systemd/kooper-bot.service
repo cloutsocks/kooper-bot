@@ -3,7 +3,7 @@ Description=Kooper discord.py bot
 
 [Service]
 User=jacob
-Environment=CONFIG_PATH=/home/jacob/discord/bots/kooper/bot/config_kooper.json
+Environment=CONFIG_PATH=/home/jacob/discord/bots/kooper/config/config_kooper.json
 WorkingDirectory=/home/jacob/discord/bots/kooper/
 ExecStart=/home/jacob/.local/bin/pipenv run python3 -u /home/jacob/discord/bots/kooper/bot/main.py
 Restart=always
