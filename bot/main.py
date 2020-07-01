@@ -78,8 +78,6 @@ async def on_ready():
     status = bot.config['playing']
     playing = discord.Game(name=status)
     await bot.change_presence(activity=playing)
-    bot.guild = bot.get_guild(bot.config['guild'])
-
     bot.slur_log_cn = bot.get_channel(720817629954179073)
 
     # await replace_underscores(bot)

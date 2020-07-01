@@ -58,7 +58,7 @@ class Actor(commands.Cog):
             return
 
         channel_id = int(match.group(1))
-        cn = self.bot.guild.get_channel(channel_id)
+        cn = self.bot.get_channel(channel_id)
 
         if not isinstance(cn, discord.TextChannel):
             await message.channel.send(f'Could not find channel {match}')
