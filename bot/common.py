@@ -81,7 +81,7 @@ def resolve_member(server, member_id):
     return member
 
 
-def find_members(bot, server, query, get_ids=False):
+def find_members(bot, server, query, get_ids=False, use_hackban=False):
     if not query:
         return None
 
@@ -102,22 +102,21 @@ def find_members(bot, server, query, get_ids=False):
             return [member]
         except MemberNotFound:
             # hackban case
-            return [discord.Object(id=uid)]
+            if use_hackban:
+                return [discord.Object(id=uid)]
+            return None
 
     found = {}
     query = normalize(query)
     for m in server.members:
-        if query == str(m.id) or normalize(str(m)).startswith(query) or query in normalize(m.name) or (m.name and m.nick and query in normalize(m.nick)):
+        if query == str(m.id) or normalize(str(m)).startswith(query) or query in normalize(m.name) or (m.nick and query in normalize(m.nick)):
             found[m.id] = m
-
-
 
     return list(found.keys()) if get_ids else list(found.values())
 
 
-def get_member_or_search(bot, server, query):
-    found = find_members(bot, server, query)
-
+def get_member_or_search(bot, server, query, use_hackban=False):
+    found = find_members(bot, server, query, use_hackban=use_hackban)
     if found and len(found) == 1:
         return True, found[0]
 
@@ -130,6 +129,7 @@ def whois_text(found, show_extra=True):
 
     now = datetime.utcnow()
     out = []
+
     for m in found:
         parts = [f'<@{m.id}>', str(m)]
         if m.nick:

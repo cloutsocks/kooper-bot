@@ -77,7 +77,8 @@ class Mod(commands.Cog):
         except (discord.Forbidden, discord.HTTPException) as e:
             await ctx.send(f'Could not kick <@{member.id}>. Error: {type(e).__name__}, {e}')
 
-        await ctx.send(f'<@{member.id}> was kicked.')
+        log_msg = await ctx.send(f'<@{member.id}> was kicked.')
+        await self.bot.log_cn.send(f'<@{member.id}> was kicked by {ctx.author} for: {msg}\n\n Context: {log_msg.jump_url}')
 
     @checks.is_mod()
     @commands.command()
@@ -88,7 +89,7 @@ class Mod(commands.Cog):
             await send_message(ctx, 'Please include a message to send with the ban. Usage: `.ban <member query> <msg>', error=True)
             return
 
-        success, result = get_member_or_search(self.bot, ctx.message.guild, query)
+        success, result = get_member_or_search(self.bot, ctx.message.guild, query, True)
         if not success:
             await ctx.send(result)
             return
@@ -123,7 +124,10 @@ class Mod(commands.Cog):
             except Exception as e:
                 await ctx.send(f'Could not ban <@{member.id}> Error: {type(e).__name__}, {e}')
             else:
-                await ctx.send(f'[Off-server] <@{member.id}> was {verb} and all of their messages sent within the past {days} days were deleted. They were not notified, as they are not on the server.')
+                log_msg = await ctx.send(f'[Off-server] <@{member.id}> was {verb} and all of their messages sent within the past {days} days were deleted. They were not notified, as they are not on the server.')
+                await self.bot.log_cn.send(
+                    f'[Off-server] <@{member.id}> was {verb} by {ctx.author} for: {msg}\n\nAll of their messages sent within the past {days} days were deleted. They were not notified, as they are not on the server. Context: {log_msg.jump_url}')
+
             return
 
 
@@ -139,7 +143,8 @@ class Mod(commands.Cog):
         except Exception as e:
             await ctx.send(f'Could not ban <@{member.id}> Error: {type(e).__name__}, {e}')
         else:
-            await ctx.send(f'<@{member.id}> was {verb} and all of their messages sent within the past {days} days were deleted.')
+            log_msg = await ctx.send(f'<@{member.id}> was {verb} and all of their messages sent within the past {days} days were deleted.')
+            await self.bot.log_cn.send(f'<@{member.id}> was {verb} by {ctx.author} for: {msg}\n\nAll of their messages sent within the past {days} days were deleted. Context: {log_msg.jump_url}')
 
     @checks.is_mod()
     @commands.command()
@@ -160,7 +165,8 @@ class Mod(commands.Cog):
         except Exception as e:
             await ctx.send(f'Could not unban <@{uid}> Error: {type(e).__name__}, {e}')
         else:
-            await ctx.send(f'<@{uid}> was unbanned, but they have not been notified of this.')
+            log_msg = await ctx.send(f'<@{uid}> was unbanned, but they have not been notified of this.')
+            await self.bot.log_cn.send(f'<@{uid}> was unbanned by {ctx.author}, but they have not been notified of this. Context: {log_msg.jump_url}')
 
     @checks.is_jacob()
     @commands.command()
@@ -291,6 +297,8 @@ class Mod(commands.Cog):
         else:
             await bot.slur_log_cn.send(
                 f'<@{message.author.id}> was banned and all of their messages sent within the past {days} days were deleted. They were told why.')
+            await bot.log_cn.send(
+                f'<@{message.author.id}> was banned via <#{bot.slur_log_cn.id}> and all of their messages sent within the past {days} days were deleted. They were told why. Context: {log_msg.jump_url}')
 
 
 def setup(bot):

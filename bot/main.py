@@ -38,6 +38,8 @@ def command_prefixes(bot, message):
 # naomi invite https://discordapp.com/api/oauth2/authorize?client_id=720740582288261150&permissions=2146827601&scope=bot
 # rosa invite https://discordapp.com/api/oauth2/authorize?client_id=720741045008072704&permissions=2146827601&scope=bot
 
+# dev invite https://discordapp.com/api/oauth2/authorize?client_id=727284999585267753&permissions=2146827601&scope=bot
+
 
 class KooperBot(commands.Bot):
     def __init__(self):
@@ -152,7 +154,7 @@ async def on_member_join(member):
     await bot.mod.join_check(member)
 
 
-@bot.command(name='reloadall', aliases=['reall', 'ra'])
+@bot.command(name='reloadall', aliases=['reall', 'ra', 'rk'])
 @checks.is_jacob()
 async def _reloadall(ctx, arg=None):
     """Reloads all modules."""
