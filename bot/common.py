@@ -107,7 +107,7 @@ def find_members(bot, server, query, get_ids=False):
     found = {}
     query = normalize(query)
     for m in server.members:
-        if query == str(m.id) or normalize(str(m)).startswith(query) or query in normalize(m.name) or (m.nick and query in normalize(m.nick)):
+        if query == str(m.id) or normalize(str(m)).startswith(query) or query in normalize(m.name) or (m.name and m.nick and query in normalize(m.nick)):
             found[m.id] = m
 
 
