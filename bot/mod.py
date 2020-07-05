@@ -228,14 +228,14 @@ class Mod(commands.Cog):
             return
 
         log_msg = None
-        log_cn = self.bot.slur_log_cn
+        bot = self.bot
         if (match := filter_remove.search(message.content)) is not None:
             await message.delete()
-            log_msg = await log_cn.send(
+            log_msg = await bot.slur_log_cn.send(
                 f'{FIELD_BREAK}\n🛑 Logged `{match.group(0)}` and **auto-deleted** message from {message.author} / <@{message.author.id}> in <#{message.channel.id}>\n<{message.jump_url}>:\n\n```{message.content[:1700]}```React to ban with a message and delete # days of messages, or 👟 kick.')
 
         elif (match := filter_warn.search(message.content)) is not None:
-            log_msg = await log_cn.send(
+            log_msg = await bot.slur_log_cn.send(
                 f'{FIELD_BREAK}\n⚠ Logged `{match.group(0)}` (without deleting) from {message.author} / <@{message.author.id}> in <#{message.channel.id}>\n<{message.jump_url}>:\n\n```{message.content[:1700]}```React to ban with a message and delete # days of messages, or 👟 kick.')
 
         if log_msg is None:
@@ -258,16 +258,17 @@ class Mod(commands.Cog):
                 await message.author.send(
                     f'You have been kicked from the KO_OP Discord for your message: {message.content}\n\nYou may rejoin at any time after acknolwedging or resolving the issue.')
             except (discord.Forbidden, discord.NotFound, discord.HTTPException) as e:
-                await log_cn.send(f'Could not message <@{message.author.id}>. Error: {type(e).__name__}, {e}')
+                await bot.slur_log_cn.send(f'Could not message <@{message.author.id}>. Error: {type(e).__name__}, {e}')
             else:
-                await log_cn.send('Message sent successfully!')
+                await bot.slur_log_cn.send('Message sent successfully!')
 
             try:
                 await message.author.kick()
             except (discord.Forbidden, discord.HTTPException) as e:
-                await log_cn.send(f'Could not kick <@{message.author.id}>. Error: {type(e).__name__}, {e}')
+                await bot.slur_log_cn.send(f'Could not kick <@{message.author.id}>. Error: {type(e).__name__}, {e}')
             else:
-                await log_cn.send(f'<@{message.author.id}> was kicked and told why. They can rejoin at any time.')
+                await bot.slur_log_cn.send(f'<@{message.author.id}> was kicked and told why. They can rejoin at any time.')
+                await bot.log_cn.send(f'<@{message.author.id}> was kicked via <#{bot.slur_log_cn.id}> and told why. They can rejoin at any time. Context: {log_msg.jump_url}')
             return
 
 
@@ -279,16 +280,16 @@ class Mod(commands.Cog):
         try:
             await message.author.send(f'You were removed automatically from the KO_OP Discord for one of your messages: {message.content}')
         except (discord.Forbidden, discord.NotFound, discord.HTTPException) as e:
-            await log_cn.send(f'Could not message <@{message.author.id}>. Error: {type(e).__name__}, {e}')
+            await bot.slur_log_cn.send(f'Could not message <@{message.author.id}>. Error: {type(e).__name__}, {e}')
         else:
-            await log_cn.send('Ban message sent successfully!')
+            await bot.slur_log_cn.send('Ban message sent successfully!')
 
         try:
             await message.author.ban(reason=f'Removed for message: {message.content}', delete_message_days=days)
         except Exception as e:
-            await log_cn.send(f'Could not ban <@{message.author.id}> Error: {type(e).__name__}, {e}')
+            await bot.slur_log_cn.send(f'Could not ban <@{message.author.id}> Error: {type(e).__name__}, {e}')
         else:
-            await log_cn.send(
+            await bot.slur_log_cn.send(
                 f'<@{message.author.id}> was banned and all of their messages sent within the past {days} days were deleted. They were told why.')
 
 
