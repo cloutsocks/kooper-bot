@@ -16,7 +16,7 @@ filter_remove = re.compile(
     r'discord\.gg/(?!ko-op\b)|retard|loli|shota|nibb(?:a|er)|nigg|\bfag|porn|\bnazi|hentai|yaoi|tranny|tranni|\brape|sneed|\brapin|\brapist|slave|\bcunt\b|41%|yiff|milf|r34|rule\s?34|\bree+\b')
 
 filter_warn = re.compile(
-    'trigger(ed|ing)|nudes|kotaku|pedophile|transgenderism|\bcp\b|pedo\b|4chan|2ch|all\slives\smatter')
+    'trigger(ed|ing)|nudes|kotaku|pedophile|transgenderism|\bcp\b|pedo\b|4chan|2ch|all\slives\smatter|suicide')
 
 
 class Mod(commands.Cog):

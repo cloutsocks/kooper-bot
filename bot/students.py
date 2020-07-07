@@ -136,10 +136,13 @@ class Students(commands.Cog):
             .add_field(name=f'🎭 Clubs{__}', value=clubs, inline=True) \
             .add_field(name=f'🎨 Society{__}', value='???', inline=True) \
             .add_field(name=f'🎼 Signature Tune{__}', value='_Secret of Mana_\n[E+A+ G+C+ D+DE A+--](https://nooknet.net/tunes?t=008558ca2b4a5db6)', inline=True) \
+            .add_field(name=f'🦖 Student Photo{__}', value='will be taken at start of school year!', inline=False) \
+            .set_image(url='https://i.imgur.com/9iGhIIc.png') \
             .set_footer(text=footer)
 
-        # .set_image(url='https://i.imgur.com/d9fpjkN.png') \
 
+        # https://i.imgur.com/1yVKSSG.png
+        # https://i.imgur.com/d9fpjkN.png
         await ctx.send(f'<@{ctx.author.id}>', embed=e)
 
 
