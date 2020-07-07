@@ -115,15 +115,15 @@ def find_members(bot, server, query, get_ids=False, use_hackban=False):
     return list(found.keys()) if get_ids else list(found.values())
 
 
-def get_member_or_search(bot, server, query, use_hackban=False):
+def get_member_or_search(bot, server, query, include_pings=True, use_hackban=False):
     found = find_members(bot, server, query, use_hackban=use_hackban)
     if found and len(found) == 1:
         return True, found[0]
 
-    return False, whois_text(found, show_extra=False)
+    return False, whois_text(found, include_pings=include_pings, show_extra=False)
 
 
-def whois_text(found, show_extra=True):
+def whois_text(found, include_pings=True, show_extra=True):
     if not found:
         return 'No matching users found.'
 
@@ -131,7 +131,11 @@ def whois_text(found, show_extra=True):
     out = []
 
     for m in found:
-        parts = [f'<@{m.id}>', str(m)]
+        if include_pings:
+            parts = [f'<@{m.id}>', str(m)]
+        else:
+            parts = [str(m)]
+
         if m.nick:
             parts.append(f'Nickname: {m.nick}')
         parts.append(str(m.id))

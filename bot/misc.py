@@ -15,6 +15,17 @@ class Misc(commands.Cog):
         self.bot = bot
         self.pets = 0
         self.max_pets = random.randint(5, 420)
+        self.bot_mentions = [f'<@!{bot_id}>' for bot_id in self.bot.config['actor_ids']]
+
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if message.author.bot:
+            return
+
+        if any(bot_mention in message.content for bot_mention in self.bot_mentions):
+            await self.bot.trotter_cn.send(f'<@&729805305965182976> character mentioned by {message.author} in <#{message.channel.id}>:\n{message.jump_url}\n"{message.content}"')
+            return
+
 
     async def remove_raw_reaction(self, payload, user=None):
         if not user:

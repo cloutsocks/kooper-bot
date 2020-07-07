@@ -21,7 +21,8 @@ initial_extensions = (
     'config',
     'misc',
     'mod',
-    'actor'
+    'actor',
+    'students'
 )
 
 
@@ -80,9 +81,11 @@ async def on_ready():
     status = bot.config['playing']
     playing = discord.Game(name=status)
     await bot.change_presence(activity=playing)
+    # todo move to config?
     bot.guild = bot.get_guild(bot.config['guild'])
     bot.log_cn = bot.get_channel(721345861333811300)
     bot.slur_log_cn = bot.get_channel(720817629954179073)
+    bot.trotter_cn = bot.get_channel(727625945288016134)
 
     # await replace_underscores(bot)
 
