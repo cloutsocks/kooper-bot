@@ -225,11 +225,11 @@ class Mod(commands.Cog):
                 pass
 
         user_text = ' '.join(f'<@{uid}>' for uid in uids)
-        msg = await ctx.send(f'This will ban: {user_text}\nwith the reason:\n```{reason}```**Note:** they will be able to see this reason if they ever appeal. Click the ✅ to confirm.')
-        await msg.add_reaction('✅')
+        prompt = await ctx.send(f'This will ban: {user_text}\nwith the reason:\n```{reason}```**Note:** they will be able to see this reason if they ever appeal. Click the ✅ to confirm.')
+        await prompt.add_reaction('✅')
 
         def check(reaction, user):
-            return user == ctx.author and str(reaction.emoji) == '✅'
+            return user == ctx.author and reaction.message.id == prompt.id and str(reaction.emoji) == '✅'
 
         try:
             reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
