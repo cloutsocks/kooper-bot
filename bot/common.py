@@ -136,7 +136,7 @@ def whois_text(bot, found, include_pings=True, show_extra=True, try_embed=False)
 
     for m in found:
         is_staff = m.id in bot.config['admin_ids']
-        name = f'{m} <:kooper:489893009228300303> KO_OP' if is_staff else str(m)
+        name = f'{m} <:kooper:489893009228300303> [KO_OP]' if is_staff else str(m)
         if include_pings and not is_staff:
             parts = [f'<@{m.id}>', name]
         else:
