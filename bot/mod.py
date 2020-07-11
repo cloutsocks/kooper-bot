@@ -29,7 +29,7 @@ class Mod(commands.Cog):
     @commands.command()
     async def whois(self, ctx, *, arg):
         found = await find_members(self.bot, ctx.message.guild, arg)
-        whois = whois_text(found, show_extra=True, try_embed=True)
+        whois = whois_text(self.bot, found, show_extra=True, try_embed=True)
         if isinstance(whois, tuple):
             text, e = whois
             await ctx.send(text, embed=e)

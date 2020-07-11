@@ -124,10 +124,10 @@ async def get_member_or_search(bot, server, query, include_pings=True, use_hackb
     if found and len(found) == 1:
         return True, found[0]
 
-    return False, whois_text(found, include_pings=include_pings, show_extra=False)
+    return False, whois_text(bot, found, include_pings=include_pings, show_extra=False)
 
 
-def whois_text(found, include_pings=True, show_extra=True, try_embed=False):
+def whois_text(bot, found, include_pings=True, show_extra=True, try_embed=False):
     if not found:
         return 'No matching users found.'
 
@@ -135,10 +135,12 @@ def whois_text(found, include_pings=True, show_extra=True, try_embed=False):
     out = []
 
     for m in found:
-        if include_pings:
-            parts = [f'<@{m.id}>', str(m)]
+        is_staff = m.id in bot.config['admin_ids']
+        name = f'{m} <:kooper:489893009228300303> KO_OP' if is_staff else str(m)
+        if include_pings and not is_staff:
+            parts = [f'<@{m.id}>', name]
         else:
-            parts = [str(m)]
+            parts = [name]
 
         try:
             if m.nick:
