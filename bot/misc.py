@@ -77,7 +77,7 @@ class Misc(commands.Cog):
             await send_message(ctx, 'Please include a message to send with. Usage: `.msg <member query> <msg>', error=True)
             return
 
-        success, result = get_member_or_search(self.bot, ctx.message.guild, query)
+        success, result = await get_member_or_search(self.bot, ctx.message.guild, query)
         if not success:
             await ctx.send(result)
             return

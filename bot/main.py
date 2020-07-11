@@ -27,7 +27,7 @@ initial_extensions = (
 
 
 def command_prefixes(bot, message):
-    return ['.', ';', ',']
+    return bot.config['prefix']
 
 
 # invite https://discordapp.com/api/oauth2/authorize?client_id=679161047000809473&permissions=2146827601&scope=bot

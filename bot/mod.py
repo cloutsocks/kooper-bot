@@ -16,7 +16,7 @@ filter_remove = re.compile(
     r'discord\.gg/(?!ko-op\b)|retard|loli|shota|nibb(?:a|er)|nigg|\bfag|porn|\bnazi|hentai|yaoi|tranny|tranni|\brape|sneed|\brapin|\brapist|slave|\bcunt\b|41%|yiff|milf|r34|rule\s?34|\bree+\b')
 
 filter_warn = re.compile(
-    'trigger(ed|ing)|nudes|kotaku|pedophile|transgenderism|\bcp\b|pedo\b|4chan|2ch|all\slives\smatter|suicide')
+    'trigger(ed|ing)|nudes|kotaku|pedophile|transgenderism|\bcp\b|pedo\b|4chan|2ch|all\slives\smatter|suicide|waifu')
 
 
 class Mod(commands.Cog):
@@ -28,8 +28,13 @@ class Mod(commands.Cog):
     @checks.is_mod()
     @commands.command()
     async def whois(self, ctx, *, arg):
-        found = find_members(self.bot, ctx.message.guild, arg)
-        await ctx.send(whois_text(found, show_extra=True))
+        found = await find_members(self.bot, ctx.message.guild, arg)
+        whois = whois_text(found, show_extra=True, try_embed=True)
+        if isinstance(whois, tuple):
+            text, e = whois
+            await ctx.send(text, embed=e)
+        else:
+            await ctx.send(whois)
 
     async def join_check(self, m):
         if m.joined_at and m.created_at:
@@ -49,13 +54,18 @@ class Mod(commands.Cog):
             await send_message(ctx, 'Please include a message to send with the kick. Usage: `.kick <member query> <msg>', error=True)
             return
 
-        success, result = get_member_or_search(self.bot, ctx.message.guild, query)
+        success, result = await get_member_or_search(self.bot, ctx.message.guild, query)
         if not success:
             await ctx.send(result)
             return
 
         member = result
-        prompt = await ctx.send(f'Click ✅ within 60 seconds to kick <@{member.id}> with the message:\n\n{msg}\n\n_They will be notified they can rejoin at any time after acknolwedging it._')
+        if hasattr(member, 'nick') and member.nick:
+            member_string = f'**{member}** aka **{member.nick}** / <@{member.id}> ({member.id})'
+        else:
+            member_string = f'**{member}** / <@{member.id}> ({member.id})'
+
+        prompt = await ctx.send(f'Click ✅ within 60 seconds to kick {member_string} with the message:\n\n{msg}\n\n_They will be notified they can rejoin at any time after acknolwedging it._')
         await prompt.add_reaction('✅')
 
         def check(reaction, user):
@@ -66,19 +76,22 @@ class Mod(commands.Cog):
             return
 
         try:
-            await member.send(f'You have been kicked for: {msg}\n\nYou may rejoin at any time after acknolwedging or resolving the issue.')
+            await member.send(f'You have been kicked for: `{msg}`\n\nYou may rejoin at any time after acknolwedging or resolving the issue.')
         except (discord.Forbidden, discord.NotFound, discord.HTTPException) as e:
-            await ctx.send(f'Could not message <@{member.id}>. Error: {type(e).__name__}, {e}')
+            await ctx.send(f'Could not message {member_string}. Error: {type(e).__name__}, {e}')
         else:
             await ctx.send('Message sent successfully!')
 
         try:
             await member.kick()
+        except AttributeError:
+            await ctx.send(f'{member_string} is not on the server, so they were not kicked.')
+            return
         except (discord.Forbidden, discord.HTTPException) as e:
-            await ctx.send(f'Could not kick <@{member.id}>. Error: {type(e).__name__}, {e}')
+            await ctx.send(f'Could not kick {member_string}. Error: {type(e).__name__}, {e}')
 
-        log_msg = await ctx.send(f'<@{member.id}> was kicked.')
-        await self.bot.log_cn.send(f'<@{member.id}> was kicked by {ctx.author} for: {msg}\n\n Context: {log_msg.jump_url}')
+        log_msg = await ctx.send(f'👟 {member_string} was __kicked__.')
+        await self.bot.log_cn.send(f'👟\n {member_string} was __kicked__ by {ctx.author} for: `{msg}`\n\n Context: {log_msg.jump_url}')
 
     @checks.is_mod()
     @commands.command()
@@ -89,7 +102,7 @@ class Mod(commands.Cog):
             await send_message(ctx, 'Please include a message to send with the ban. Usage: `.ban <member query> <msg>', error=True)
             return
 
-        success, result = get_member_or_search(self.bot, ctx.message.guild, query, True)
+        success, result = await get_member_or_search(self.bot, ctx.message.guild, query, use_hackban=True)
         if not success:
             await ctx.send(result)
             return
@@ -116,35 +129,45 @@ class Mod(commands.Cog):
         except Exception as e:
             pass
 
-        verb = '**rebanned**' if was_banned else 'banned'
+        verb = '_rebanned_' if was_banned else 'banned'
 
         if isinstance(member, discord.Object):
+            member_string = f'<@{member.id}> / {member.id}'
+            try:
+                u = await self.bot.fetch_user(member.id)
+                member_string = f'**{u}** / <@{u.id}> ({u.id})'
+            except (discord.NotFound, discord.HTTPException) as e:
+                pass
+
             try:
                 await ctx.guild.ban(member, reason=msg, delete_message_days=days)
             except Exception as e:
-                await ctx.send(f'Could not ban <@{member.id}> Error: {type(e).__name__}, {e}')
+                await ctx.send(f'Could not ban {member_string} Error: {type(e).__name__}, {e}')
             else:
-                log_msg = await ctx.send(f'[Off-server] <@{member.id}> was {verb} and all of their messages sent within the past {days} days were deleted. They were not notified, as they are not on the server.')
+                log_msg = await ctx.send(f'🔨 [Off-server] {member_string} was **{verb}** and all of their messages sent within the past {days} days were deleted. They were not notified, as they are not on the server.')
                 await self.bot.log_cn.send(
-                    f'[Off-server] <@{member.id}> was {verb} by {ctx.author} for: {msg}\n\nAll of their messages sent within the past {days} days were deleted. They were not notified, as they are not on the server. Context: {log_msg.jump_url}')
-
+                    f'🔨\n [Off-server] {member_string} was **{verb}** by {ctx.author} for: `{msg}`\n\nAll of their messages sent within the past {days} days were deleted. They were not notified, as they are not on the server. Context: {log_msg.jump_url}')
             return
 
+        if hasattr(member, 'nick') and member.nick:
+            member_string = f'**{member}** aka **{member.nick}** / <@{member.id}> ({member.id})'
+        else:
+            member_string = f'**{member}** / <@{member.id}> ({member.id})'
 
         try:
-            await member.send(f'You have been banned for: {msg}')
+            await member.send(f'You have been banned for: `{msg}`')
         except (discord.Forbidden, discord.NotFound, discord.HTTPException) as e:
-            await ctx.send(f'Could not message <@{member.id}>. Error: {type(e).__name__}, {e}')
+            await ctx.send(f'Could not message {member_string}. Error: {type(e).__name__}, {e}')
         else:
             await ctx.send('Ban message sent successfully!')
 
         try:
             await member.ban(reason=msg, delete_message_days=days)
         except Exception as e:
-            await ctx.send(f'Could not ban <@{member.id}> Error: {type(e).__name__}, {e}')
+            await ctx.send(f'Could not ban {member_string} Error: {type(e).__name__}, {e}')
         else:
-            log_msg = await ctx.send(f'<@{member.id}> was {verb} and all of their messages sent within the past {days} days were deleted.')
-            await self.bot.log_cn.send(f'<@{member.id}> was {verb} by {ctx.author} for: {msg}\n\nAll of their messages sent within the past {days} days were deleted. Context: {log_msg.jump_url}')
+            log_msg = await ctx.send(f'🔨 {member_string} was **{verb}** and all of their messages sent within the past {days} days were deleted.')
+            await self.bot.log_cn.send(f'🔨\n {member_string} was **{verb}** by {ctx.author} for: `{msg}`\n\nAll of their messages sent within the past {days} days were deleted. Context: {log_msg.jump_url}')
 
     @checks.is_mod()
     @commands.command()
@@ -160,13 +183,20 @@ class Mod(commands.Cog):
                 await send_message(ctx, 'You have to include the user id or ping them: `.unban <user id or @user>', error=True)
                 return
 
+        member_string = f'<@{uid}> / {uid}'
+        try:
+            u = await self.bot.fetch_user(uid)
+            member_string = f'**{u}** / <@{u.id}> ({u.id})'
+        except (discord.NotFound, discord.HTTPException) as e:
+            pass
+
         try:
             await ctx.guild.unban(discord.Object(id=uid))
         except Exception as e:
-            await ctx.send(f'Could not unban <@{uid}> Error: {type(e).__name__}, {e}')
+            await ctx.send(f'Could not unban {member_string} Error: {type(e).__name__}, {e}')
         else:
-            log_msg = await ctx.send(f'<@{uid}> was unbanned, but they have not been notified of this.')
-            await self.bot.log_cn.send(f'<@{uid}> was unbanned by {ctx.author}, but they have not been notified of this. Context: {log_msg.jump_url}')
+            log_msg = await ctx.send(f'🌈 {member_string} was **unbanned**, but they have not been notified of this.')
+            await self.bot.log_cn.send(f'🌈\n {member_string} was **unbanned** by {ctx.author}, but they have not been notified of this. Context: {log_msg.jump_url}')
 
     @checks.is_jacob()
     @commands.command()
@@ -195,7 +225,7 @@ class Mod(commands.Cog):
                 pass
 
         user_text = ' '.join(f'<@{uid}>' for uid in uids)
-        msg = await ctx.send(f'This will ban:\n\n{user_text}with the reason:\n```{reason}```\n\n**Note:** they will be able to see this reason if they ever appeal. Click the ✅ to confirm.')
+        msg = await ctx.send(f'This will ban: {user_text}\nwith the reason:\n```{reason}```**Note:** they will be able to see this reason if they ever appeal. Click the ✅ to confirm.')
         await msg.add_reaction('✅')
 
         def check(reaction, user):
@@ -207,12 +237,13 @@ class Mod(commands.Cog):
             await ctx.send('You took too long')
         else:
             await ctx.send('Attempting to ban...')
-            for uid in uids:
+            for i, uid in enumerate(uids):
                 try:
                     await ctx.guild.ban(discord.Object(id=uid), reason=reason)
+                    await ctx.send(f'🔨 Banned <@{uid}> / {uid} [{i+1} / {len(uids)}]')
                 except Exception as e:
-                    await ctx.send(f'Could not ban <@{uid}> Error: {type(e).__name__}, {e}')
-            await ctx.send('Done.')
+                    await ctx.send(f'Could not ban <@{uid}> / {uid} Error: {type(e).__name__}, {e}')
+            await ctx.send('😇 Done.')
 
     async def sync_bans(self):
         wf_guild_id = 649042459195867136
@@ -232,6 +263,11 @@ class Mod(commands.Cog):
 
         if message.author.bot or message.author.guild_permissions.manage_guild:
             return
+
+        if hasattr(message.author, 'nick') and message.author.nick:
+            member_string = f'**{message.author}** aka **{message.nick}** / <@{message.author.id}> ({message.author.id})'
+        else:
+            member_string = f'**{message.author}** / <@{message.author.id}> ({message.author.id})'
 
         log_msg = None
         bot = self.bot
@@ -264,17 +300,17 @@ class Mod(commands.Cog):
                 await message.author.send(
                     f'You have been kicked from the KO_OP Discord for your message: {message.content}\n\nYou may rejoin at any time after acknolwedging or resolving the issue.')
             except (discord.Forbidden, discord.NotFound, discord.HTTPException) as e:
-                await bot.slur_log_cn.send(f'Could not message <@{message.author.id}>. Error: {type(e).__name__}, {e}')
+                await bot.slur_log_cn.send(f'Could not message {member_string}. Error: {type(e).__name__}, {e}')
             else:
                 await bot.slur_log_cn.send('Message sent successfully!')
 
             try:
                 await message.author.kick()
             except (discord.Forbidden, discord.HTTPException) as e:
-                await bot.slur_log_cn.send(f'Could not kick <@{message.author.id}>. Error: {type(e).__name__}, {e}')
+                await bot.slur_log_cn.send(f'Could not kick {member_string}. Error: {type(e).__name__}, {e}')
             else:
-                await bot.slur_log_cn.send(f'<@{message.author.id}> was kicked and told why. They can rejoin at any time.')
-                await bot.log_cn.send(f'<@{message.author.id}> was kicked via <#{bot.slur_log_cn.id}> and told why. They can rejoin at any time. Context: {log_msg.jump_url}')
+                await bot.slur_log_cn.send(f'👟 {member_string} was _kicked_ and told why. They can rejoin at any time.')
+                await bot.log_cn.send(f'👟\n {member_string} was _kicked_ via <#{bot.slur_log_cn.id}> and told why. They can rejoin at any time. Context: {log_msg.jump_url}')
             return
 
 
@@ -286,19 +322,19 @@ class Mod(commands.Cog):
         try:
             await message.author.send(f'You were removed automatically from the KO_OP Discord for one of your messages: {message.content}')
         except (discord.Forbidden, discord.NotFound, discord.HTTPException) as e:
-            await bot.slur_log_cn.send(f'Could not message <@{message.author.id}>. Error: {type(e).__name__}, {e}')
+            await bot.slur_log_cn.send(f'Could not message {member_string}. Error: {type(e).__name__}, {e}')
         else:
             await bot.slur_log_cn.send('Ban message sent successfully!')
 
         try:
             await message.author.ban(reason=f'Removed for message: {message.content}', delete_message_days=days)
         except Exception as e:
-            await bot.slur_log_cn.send(f'Could not ban <@{message.author.id}> Error: {type(e).__name__}, {e}')
+            await bot.slur_log_cn.send(f'Could not ban {member_string} Error: {type(e).__name__}, {e}')
         else:
             await bot.slur_log_cn.send(
-                f'<@{message.author.id}> was banned and all of their messages sent within the past {days} days were deleted. They were told why.')
+                f'🔨 {member_string} was _banned_ and all of their messages sent within the past {days} days were deleted. They were told why.')
             await bot.log_cn.send(
-                f'<@{message.author.id}> was banned via <#{bot.slur_log_cn.id}> and all of their messages sent within the past {days} days were deleted. They were told why. Context: {log_msg.jump_url}')
+                f'🔨\n {member_string} was _banned_ via <#{bot.slur_log_cn.id}> and all of their messages sent within the past {days} days were deleted. They were told why. Context: {log_msg.jump_url}')
 
 
 def setup(bot):
