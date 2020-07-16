@@ -22,8 +22,6 @@ filter_warn = re.compile(
 class Mod(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.mod_cn = bot.get_channel(628699149545635850)
-
 
     @checks.is_mod()
     @commands.command()
@@ -35,6 +33,11 @@ class Mod(commands.Cog):
             await ctx.send(text, embed=e)
         else:
             await ctx.send(whois)
+
+    @commands.Cog.listener()
+    async def on_member_join(self, member):
+        if member.guild == self.bot.guild:
+            await self.join_check(member)
 
     async def join_check(self, m):
         if m.joined_at and m.created_at:
@@ -200,7 +203,7 @@ class Mod(commands.Cog):
 
     @checks.is_jacob()
     @commands.command()
-    async def massban(self, ctx, *, arg=None):
+    async def massban(self, ctx, *, arg=''):
 
         m = re.search(r'\[(.*)\]', arg, flags=re.DOTALL)
         if not m:
@@ -245,6 +248,13 @@ class Mod(commands.Cog):
                     await ctx.send(f'Could not ban <@{uid}> / {uid} Error: {type(e).__name__}, {e}')
             await ctx.send('😇 Done.')
 
+
+    @checks.is_jacob()
+    @commands.command(aliases=['servers'])
+    async def guilds(self, ctx):
+        guilds = '\n'.join([f'{guild.id} {guild}{" <- [here]" if guild == ctx.guild else ""}' for guild in self.bot.guilds])
+        await ctx.send(f'```{guilds}```')
+
     async def sync_bans(self):
         wf_guild_id = 649042459195867136
         wg_guild_id = 546468613805309962
@@ -265,7 +275,7 @@ class Mod(commands.Cog):
             return
 
         if hasattr(message.author, 'nick') and message.author.nick:
-            member_string = f'**{message.author}** aka **{message.nick}** / <@{message.author.id}> ({message.author.id})'
+            member_string = f'**{message.author}** aka **{message.author.nick}** / <@{message.author.id}> ({message.author.id})'
         else:
             member_string = f'**{message.author}** / <@{message.author.id}> ({message.author.id})'
 

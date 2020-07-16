@@ -13,9 +13,12 @@ from discord.ext import commands
 import checks
 
 # from one_shots.tally_meltans import tally, raffle, get_test_raid_members
-from one_shots.wg_misc import add_role_to_everyone
+# from one_shots.wg_misc import add_role_to_everyone
+# from one_shots.koop_misc import add_admin_holding_server
+# from one_shots.misc import tally_reactions
 
-initial_extensions = (
+
+exts = [
     'common',
     'error',
     'config',
@@ -23,7 +26,7 @@ initial_extensions = (
     'mod',
     'actor',
     'students'
-)
+]
 
 
 def command_prefixes(bot, message):
@@ -52,20 +55,25 @@ class KooperBot(commands.Bot):
         self.misc = None
         self.mod = None
         self.actor = None
+        self.appeals_guild = None
+        self.mail_guild = None
 
         self.wfr = {}
         self.wfm = {}
 
-        for extension in initial_extensions:
-            try:
-                self.load_extension(extension)
-            except Exception as e:
-                print(f'Failed to load extension {extension}.', file=sys.stderr)
-                traceback.print_exc()
+        for extension in exts:
+            self.load(extension)
 
     def clear_wait_fors(self, uid):
         self.wfr.pop(uid, None)
         self.wfm.pop(uid, None)
+
+    def load(self, extension):
+        try:
+            self.load_extension(extension)
+        except Exception as e:
+            print(f'Failed to load extension {extension}.', file=sys.stderr)
+            traceback.print_exc()
 
 
 bot = KooperBot()
@@ -83,9 +91,31 @@ async def on_ready():
     await bot.change_presence(activity=playing)
     # todo move to config?
     bot.guild = bot.get_guild(bot.config['guild'])
+    bot.mod_cn = bot.get_channel(721827640570544208)
     bot.log_cn = bot.get_channel(721345861333811300)
     bot.slur_log_cn = bot.get_channel(720817629954179073)
     bot.trotter_cn = bot.get_channel(727625945288016134)
+
+    try:
+        bot.appeals_guild = bot.get_guild(bot.config['appeals_guild'])
+    except Exception:
+        pass
+
+    if bot.appeals_guild:
+        print('Loading appeals cog')
+        exts.append('appeals')
+        bot.load('appeals')
+
+    try:
+        bot.mail_guild = bot.get_guild(bot.config['mail_guild'])
+    except Exception:
+        pass
+
+    if bot.mail_guild:
+        print('Loading mail cog')
+        exts.append('mail')
+        bot.load('mail')
+
 
     # await replace_underscores(bot)
 
@@ -107,6 +137,11 @@ async def on_ready():
 
     # await ohdear()
 
+    # await make_holding_server(bot)
+    # await add_admin_holding_server(bot)
+
+    # await tally_reactions(bot, '🦆', 679078888575467530, 200)
+
 
 
 async def handle(guild, member):
@@ -115,16 +150,16 @@ async def handle(guild, member):
     await member.ban(reason="Suspected raider (Automatic)")
 
 
-async def ohdear():
-    futs = []
-    guild = bot.get_guild(372482304867827712)
-    for member in guild.members:
-        if member.joined_at < datetime.datetime.now() - datetime.timedelta(minutes=10):
-            continue
-
-        futs.append(handle(guild, member))
-
-    print(await asyncio.gather(*futs, return_exceptions=True))
+# async def ohdear():
+#     futures = []
+#     guild = bot.get_guild(372482304867827712)
+#     for member in guild.members:
+#         if member.joined_at < datetime.datetime.now() - datetime.timedelta(minutes=10):
+#             continue
+#
+#         futures.append(handle(guild, member))
+#
+#     print(await asyncio.gather(*futures, return_exceptions=True))
 
 @bot.event
 async def on_message(message):
@@ -135,31 +170,30 @@ async def on_message(message):
     if message.guild is None and uid not in bot.config['creator_ids']:
         return
 
-    await bot.mod.abuse_check(message)
-
     await bot.process_commands(message)
-    if uid in bot.wfm:
-        waiter = bot.wfm[uid]
-        if waiter['channel'] != message.channel:
-            return
-        try:
-            if time.time() > waiter['expires']:
-                del bot.wfm[uid]
+
+    if not bot.appeals_guild or message.guild and message.guild != bot.appeals_guild:
+        # todo move abuse_check to mod
+        # await bot.process_commands(message)
+        # await bot.mod.abuse_check(message)
+        if uid in bot.wfm:
+            waiter = bot.wfm[uid]
+            if waiter['channel'] != message.channel:
                 return
-        except KeyError:
-            pass
+            try:
+                if time.time() > waiter['expires']:
+                    del bot.wfm[uid]
+                    return
+            except KeyError:
+                pass
 
-        await waiter['handler'].handle_message(message)
+            await waiter['handler'].handle_message(message)
 
-
-@bot.event
-async def on_member_join(member):
-    await bot.mod.join_check(member)
 
 
 @bot.command(name='reloadall', aliases=['reall', 'ra', 'rk'])
 @checks.is_jacob()
-async def _reloadall(ctx, arg=None):
+async def _reloadall(ctx):
     """Reloads all modules."""
 
     # if bot.config.get('disable_hot_reload', True):
@@ -167,8 +201,9 @@ async def _reloadall(ctx, arg=None):
 
     bot.wfm = {}
     bot.wfr = {}
+
     try:
-        for extension in initial_extensions:
+        for extension in exts:
             bot.unload_extension(extension)
             bot.load_extension(extension)
     except Exception as e:

@@ -11,11 +11,21 @@ import checks
 
 
 def load_config(bot):
-    with open(os.environ.get('CONFIG_PATH', '../config/config_kooper.json')) as f:
+    # with open(os.environ.get('CONFIG_PATH', '../config/remote/config_kooper.json')) as f:
+    with open(os.environ.get('CONFIG_PATH', '../config/config_toxel.json')) as f:
         bot.config = json.load(f)
 
+        for key in ['guild', 'appeals_guild', 'mail_guild']:
+            try:
+                bot.config[key] = int(bot.config[key])
+            except Exception:
+                pass
+
         for key in ['creator_ids', 'admin_ids', 'actor_ids']:
-            bot.config[key] = [int(val) for val in bot.config[key]]
+            try:
+                bot.config[key] = [int(val) for val in bot.config[key]]
+            except Exception:
+                pass
 
 
 class Config(commands.Cog):

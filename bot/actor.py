@@ -43,10 +43,27 @@ async def actor_send(cn, msg, delay, typing):
 class Actor(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.bot_mentions = [f'<@!{bot_id}>' for bot_id in self.bot.config['actor_ids']]
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.author == self.bot.user:
+        await self.process_mentions(message)
+        await self.process_dialog(message)
+
+    async def process_mentions(self, message):
+        if message.author.bot or not message.guild or message.guild.id != self.bot.config['guild']:
+            return
+
+        if any(bot_mention in message.content for bot_mention in self.bot_mentions):
+            await self.bot.trotter_cn.send(f'<@&729805305965182976> character mentioned by {message.author} in <#{message.channel.id}>:\n{message.jump_url}\n"{message.content}"')
+            return
+
+    async def process_dialog(self, message):
+
+        if message.author.bot:
+            return
+
+        if self.bot.appeals_guild and message.guild and self.bot.appeals_guild == message.guild:
             return
 
         uid = message.author.id
