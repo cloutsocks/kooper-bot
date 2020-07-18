@@ -1,12 +1,14 @@
 import asyncio
 import random
 import re
+import os
+import subprocess
 
 import discord
 from discord.ext import commands
 
 from datetime import datetime, timedelta
-from common import send_message, idPattern, get_member_or_search, emojiPattern, customEmojiPattern
+from common import send_message, idPattern, get_member_or_search, emojiPattern, customEmojiPattern, simplify_timedelta
 
 import checks
 
@@ -125,8 +127,6 @@ class Misc(commands.Cog):
             await ctx.send('_Kooper merely farts._')
             return
 
-
-
         em = random.choice(self.bot.config['pet_emoji'])
         msg = f'''{em}💙'''
         await ctx.send(f'{msg} _\\*is pet\\* _ x {self.pets}')
@@ -155,6 +155,28 @@ class Misc(commands.Cog):
         for reaction in emoji:
             await msg.add_reaction(reaction.strip('<> '))
 
+    @checks.is_bot_admin()
+    @commands.command(aliases=['git', 'v', 'ver', 'stats'])
+    async def about(self, ctx, *, arg=''):
+        # revision = subprocess.check_output(['git', 'show', '--quiet', '--pretty=format:%H|%at|%an|%s', 'HEAD'])
+        try:
+            n = int(arg)
+        except ValueError:
+            n = 1
+
+        revisions = subprocess.check_output(['git', 'log', '--quiet', '-n', str(n), '--pretty=format:%H|%at|%an|%s']).decode('UTF-8').split('\n')
+
+        e = discord.Embed()
+        for revision in revisions:
+            hash, ts, name, commit_msg = revision.split('|')
+            d = datetime.fromtimestamp(int(ts))
+            now = datetime.utcnow()
+            d = now - d
+            e.add_field(name=f'`{hash[:6]}`', value=f'''{simplify_timedelta(d)}\n{commit_msg} - {name}''', inline=False)
+
+        e.title = 'Kooper'
+        e.color = 0xa991e8
+        await ctx.send(embed=e)
 #
 #     async def band_test(self):
 #         cn = self.bot.get_channel(723013268809056286)

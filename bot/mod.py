@@ -25,7 +25,7 @@ class Mod(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if self.bot.guild is not None and message.author.guild == self.bot.guild:
+        if self.bot.guild is not None and message.guild == self.bot.guild:
             await self.abuse_check(message)
 
     @commands.Cog.listener()
@@ -253,7 +253,6 @@ class Mod(commands.Cog):
                     await ctx.send(f'Could not ban <@{uid}> / {uid} Error: {type(e).__name__}, {e}')
             await ctx.send('😇 Done.')
 
-
     @checks.is_jacob()
     @commands.command(aliases=['servers'])
     async def guilds(self, ctx):
@@ -273,9 +272,7 @@ class Mod(commands.Cog):
             except Exception as e:
                 print(f'Could not ban <@{entry.user.id}> Error: {type(e).__name__}, {e}')
 
-
     async def abuse_check(self, message):
-
         if message.author.bot or message.author.guild_permissions.manage_guild:
             return
 
