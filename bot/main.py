@@ -17,7 +17,6 @@ import checks
 # from one_shots.koop_misc import add_admin_holding_server
 # from one_shots.misc import tally_reactions
 
-
 exts = [
     'common',
     'error',
@@ -33,17 +32,7 @@ def command_prefixes(bot, message):
     return bot.config['prefix']
 
 
-# invite https://discordapp.com/api/oauth2/authorize?client_id=679161047000809473&permissions=2146827601&scope=bot
-
-
-
-# kooper invite https://discordapp.com/api/oauth2/authorize?client_id=715609234561302571&permissions=2146827601&scope=bot
-
-# naomi invite https://discordapp.com/api/oauth2/authorize?client_id=720740582288261150&permissions=2146827601&scope=bot
-# rosa invite https://discordapp.com/api/oauth2/authorize?client_id=720741045008072704&permissions=2146827601&scope=bot
-
-# dev invite https://discordapp.com/api/oauth2/authorize?client_id=727284999585267753&permissions=2146827601&scope=bot
-
+# invite https://discordapp.com/api/oauth2/authorize?client_id=ID&permissions=0&scope=bot
 
 class KooperBot(commands.Bot):
     def __init__(self):
@@ -116,30 +105,19 @@ async def on_ready():
         exts.append('mail')
         bot.load('mail')
 
-
     # await replace_underscores(bot)
-
     # await bot.mod.sync_bans()
-
     # await bot.misc.add_roles_to_every_poster(680310582083452932, 680302613970944031)
     # await tally(bot, 680310582083452932)
     # await raffle(bot)
     # await get_test_raid_members(bot)
     # await raffle
-
     # await add_role_to_everyone(bot)
-
-
     # await bot.misc.band_test()
-
-
     # print('Done')
-
     # await ohdear()
-
     # await make_holding_server(bot)
     # await add_admin_holding_server(bot)
-
     # await tally_reactions(bot, '🦆', 679078888575467530, 200)
 
 
