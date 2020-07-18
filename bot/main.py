@@ -170,12 +170,8 @@ async def on_message(message):
     if message.guild is None and uid not in bot.config['creator_ids']:
         return
 
-    await bot.process_commands(message)
-
     if not bot.appeals_guild or message.guild and message.guild != bot.appeals_guild:
-        # todo move abuse_check to mod
-        # await bot.process_commands(message)
-        # await bot.mod.abuse_check(message)
+        await bot.process_commands(message)
         if uid in bot.wfm:
             waiter = bot.wfm[uid]
             if waiter['channel'] != message.channel:

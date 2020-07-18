@@ -23,16 +23,10 @@ class Mod(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @checks.is_mod()
-    @commands.command()
-    async def whois(self, ctx, *, arg):
-        found = await find_members(self.bot, ctx.message.guild, arg)
-        whois = whois_text(self.bot, found, show_extra=True, try_embed=True)
-        if isinstance(whois, tuple):
-            text, e = whois
-            await ctx.send(text, embed=e)
-        else:
-            await ctx.send(whois)
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if self.bot.guild is not None and message.author.guild == self.bot.guild:
+            await self.abuse_check(message)
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
@@ -47,6 +41,17 @@ class Mod(commands.Cog):
 
             if m.joined_at - m.created_at < timedelta(minutes=15):
                 await self.bot.get_channel(721827640570544208).send(f'🕑 **User joined within 15 minutes of making an account:**\n{m} / <@{m.id}>')
+
+    @checks.is_mod()
+    @commands.command()
+    async def whois(self, ctx, *, arg):
+        found = await find_members(self.bot, ctx.message.guild, arg)
+        whois = whois_text(self.bot, found, show_extra=True, try_embed=True)
+        if isinstance(whois, tuple):
+            text, e = whois
+            await ctx.send(text, embed=e)
+        else:
+            await ctx.send(whois)
 
     @checks.is_mod()
     @commands.command()
