@@ -172,7 +172,7 @@ class Misc(commands.Cog):
             d = datetime.fromtimestamp(int(ts))
             now = datetime.utcnow()
             d = now - d
-            e.add_field(name=f'`{hash[:6]}`', value=f'''{simplify_timedelta(d)}\n{commit_msg} - {name}''', inline=False)
+            e.add_field(name=f'`{hash[:6]}`', value=f'''{simplify_timedelta(d)} ago\n{commit_msg} - {name}''', inline=False)
 
         e.title = 'Kooper'
         e.color = 0xa991e8
