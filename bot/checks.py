@@ -34,7 +34,6 @@ def has_guild_permissions(*, check=all, **perms):
 
 # These do not take channel overrides into account
 
-
 def is_jacob():
     def predicate(ctx):
         return ctx.message.author.id in ctx.bot.config['creator_ids']

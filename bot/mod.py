@@ -259,6 +259,11 @@ class Mod(commands.Cog):
         guilds = '\n'.join([f'{guild.id} {guild}{" <- [here]" if guild == ctx.guild else ""}' for guild in self.bot.guilds])
         await ctx.send(f'```{guilds}```')
 
+    @checks.is_jacob()
+    @commands.command()
+    async def modules(self, ctx):
+        await ctx.send(f'```{self.bot.extensions.keys()}```')
+
     async def sync_bans(self):
         wf_guild_id = 649042459195867136
         wg_guild_id = 546468613805309962

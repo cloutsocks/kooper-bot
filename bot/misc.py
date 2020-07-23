@@ -52,6 +52,11 @@ class Misc(commands.Cog):
         await channel.send(arg)
         await ctx.message.add_reaction('✅')
 
+    @checks.is_mod()
+    @commands.command(name='embed')
+    async def repeat_embed(self, ctx, *, arg):
+        await ctx.send(embed=discord.Embed(description=arg))
+
     # @checks.is_mod()
     # @commands.command()
     # async def naomi(self, ctx, channel:discord.TextChannel, *, arg):
@@ -177,6 +182,8 @@ class Misc(commands.Cog):
         e.title = 'Kooper'
         e.color = 0xa991e8
         await ctx.send(embed=e)
+
+
 #
 #     async def band_test(self):
 #         cn = self.bot.get_channel(723013268809056286)
