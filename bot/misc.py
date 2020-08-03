@@ -53,6 +53,10 @@ class Misc(commands.Cog):
         await ctx.message.add_reaction('✅')
 
     @checks.is_mod()
+    async def repeat(self, ctx, *, arg):
+        await ctx.send(arg)
+
+    @checks.is_mod()
     @commands.command(name='embed')
     async def repeat_embed(self, ctx, *, arg):
         await ctx.send(embed=discord.Embed(description=arg))

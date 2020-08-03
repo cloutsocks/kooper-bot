@@ -12,6 +12,7 @@ import checks
 
 def load_config(bot):
     print(f'''CONFIG_PATH: {os.environ.get('CONFIG_PATH')}''')
+
     # with open(os.environ.get('CONFIG_PATH', '../config/config_toxel.json')) as f:
     with open(os.environ.get('CONFIG_PATH', '../config/remote/config_kooper.json')) as f:
         bot.config = json.load(f)

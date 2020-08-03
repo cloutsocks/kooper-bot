@@ -131,6 +131,8 @@ def whois_text(bot, found, include_pings=True, show_extra=True, try_embed=False)
     if not found:
         return 'No matching users found.'
 
+    make_embed = try_embed and len(found) == 1
+
     now = datetime.utcnow()
     out = []
 
@@ -177,9 +179,11 @@ def whois_text(bot, found, include_pings=True, show_extra=True, try_embed=False)
     if len(out) > 1997:
         out = out[:1997] + '...'
 
-    if try_embed and len(found) == 1:
+    if make_embed:
         m, = found
-        return str(m.id), discord.Embed(description=out).set_thumbnail(url=m.avatar_url)
+        text = f'''<@{m.id}>
+`{m.id}`'''
+        return text, discord.Embed(description=out).set_thumbnail(url=m.avatar_url)
 
     return out
 
