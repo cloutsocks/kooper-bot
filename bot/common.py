@@ -139,7 +139,7 @@ def whois_text(bot, found, include_pings=True, show_extra=True, try_embed=False)
     for m in found:
         is_staff = m.id in bot.config['admin_ids']
         name = f'{m} <:kooper:489893009228300303> [KO_OP]' if is_staff else str(m)
-        if include_pings and not is_staff:
+        if not make_embed and include_pings and not is_staff:
             parts = [f'<@{m.id}>', name]
         else:
             parts = [name]
@@ -181,9 +181,7 @@ def whois_text(bot, found, include_pings=True, show_extra=True, try_embed=False)
 
     if make_embed:
         m, = found
-        text = f'''<@{m.id}>
-`{m.id}`'''
-        return text, discord.Embed(description=out).set_thumbnail(url=m.avatar_url)
+        return f'<@{m.id}>', discord.Embed(description=out).set_thumbnail(url=m.avatar_url)
 
     return out
 
