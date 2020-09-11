@@ -96,7 +96,7 @@ class Misc(commands.Cog):
         else:
 
             try:
-                await member.send(f'{msg}\n\n<:kooper:489893009228300303> *This message was delivered by the {self.bot.guild} staff.*')
+                await member.send(f'''{msg}\n\n{self.bot.config['bot_emoji']} *This message was delivered by the {self.bot.guild} staff.*''')
             except (discord.Forbidden, discord.NotFound, discord.HTTPException) as e:
                 await ctx.send(f'Could not message user. Error: {type(e).__name__}, {e}')
                 return
@@ -105,30 +105,30 @@ class Misc(commands.Cog):
 
 
 
-    @checks.is_mod()
-    @commands.command()
-    async def fetch(self, ctx, *, arg):
-        channel = self.bot.get_channel(698553933098123284)
-        msg = await channel.fetch_message(713814437177589801)
-
-        print(channel)
-        print(msg)
-
-        users = await msg.reactions[0].users().flatten()
-
-        role = channel.guild.get_role(715344729390448762)
-        for u in users:
-            if u in channel.guild.members:
-                print(f'adding to {str(u)}')
-                await u.add_roles(role)
-                print(f'added to {str(u)}')
-
-        await ctx.message.add_reaction('✅')
+    # @checks.is_mod()
+    # @commands.command()
+    # async def fetch(self, ctx, *, arg):
+    #     channel = self.bot.get_channel(698553933098123284)
+    #     msg = await channel.fetch_message(713814437177589801)
+    #
+    #     print(channel)
+    #     print(msg)
+    #
+    #     users = await msg.reactions[0].users().flatten()
+    #
+    #     role = channel.guild.get_role(715344729390448762)
+    #     for u in users:
+    #         if u in channel.guild.members:
+    #             print(f'adding to {str(u)}')
+    #             await u.add_roles(role)
+    #             print(f'added to {str(u)}')
+    #
+    #     await ctx.message.add_reaction('✅')
 
     @commands.command()
     async def pet(self, ctx):
         if self.pets >= self.max_pets:
-            return await ctx.send(f'''_Kooper is all petted out and sleeping now._ <:kooper:489893009228300303>💤''')
+            return await ctx.send(f'''_{self.bot.name} is all petted out and sleeping now._ <:kooper:489893009228300303>💤''')
         self.pets += 1
 
         if(random.random() < 0.05):
@@ -183,7 +183,7 @@ class Misc(commands.Cog):
             d = now - d
             e.add_field(name=f'`{hash[:6]}`', value=f'''{simplify_timedelta(d)} ago\n{commit_msg} - {name}''', inline=False)
 
-        e.title = 'Kooper'
+        e.title = self.bot.name
         e.color = 0xa991e8
         await ctx.send(embed=e)
 

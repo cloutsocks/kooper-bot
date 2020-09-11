@@ -30,6 +30,7 @@ class KooperBot(commands.Bot):
 
         # self.help_command = None
 
+        self.guild = None
         self.config = None
         self.misc = None
         self.mod = None
@@ -62,6 +63,9 @@ class KooperBot(commands.Bot):
         except Exception as e:
             print(f'Failed to load extension {extension}.', file=sys.stderr)
             traceback.print_exc()
+            
+    def is_kooper(self):
+        return self.guild == 546468613805309962
 
 
 bot = KooperBot()

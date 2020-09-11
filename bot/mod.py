@@ -25,7 +25,7 @@ class Mod(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if self.bot.guild is not None and message.guild == self.bot.guild:
+        if self.bot.is_kooper() and self.bot.guild is not None and message.guild == self.bot.guild:
             await self.abuse_check(message)
 
     @commands.Cog.listener()
@@ -315,7 +315,7 @@ class Mod(commands.Cog):
         if str(reaction.emoji) == '👟':
             try:
                 await message.author.send(
-                    f'You have been kicked from the KO_OP Discord for your message: {message.content}\n\nYou may rejoin at any time after acknolwedging or resolving the issue.')
+                    f'You have been kicked from the {self.bot.guild} Discord for your message: {message.content}\n\nYou may rejoin at any time after acknolwedging or resolving the issue.')
             except (discord.Forbidden, discord.NotFound, discord.HTTPException) as e:
                 await bot.slur_log_cn.send(f'Could not message {member_string}. Error: {type(e).__name__}, {e}')
             else:
@@ -337,7 +337,7 @@ class Mod(commands.Cog):
             return
 
         try:
-            await message.author.send(f'You were removed automatically from the KO_OP Discord for one of your messages: {message.content}')
+            await message.author.send(f'You were removed automatically from the {self.bot.guild} Discord for one of your messages: {message.content}')
         except (discord.Forbidden, discord.NotFound, discord.HTTPException) as e:
             await bot.slur_log_cn.send(f'Could not message {member_string}. Error: {type(e).__name__}, {e}')
         else:
