@@ -93,15 +93,15 @@ async def on_ready():
         bot.exts.append('appeals')
         bot.load('appeals')
 
-    try:
-        bot.mail_guild = bot.get_guild(bot.config['mail_guild'])
-    except Exception:
-        pass
-
-    if bot.mail_guild:
-        print('Loading mail cog')
-        bot.exts.append('mail')
-        bot.load('mail')
+    # try:
+    #     bot.mail_guild = bot.get_guild(bot.config['mail_guild'])
+    # except Exception:
+    #     pass
+    #
+    # if bot.mail_guild:
+    #     print('Loading mail cog')
+    #     bot.exts.append('mail')
+    #     bot.load('mail')
 
     try:
         bot.exts += bot.config['exts']
