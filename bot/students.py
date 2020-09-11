@@ -146,7 +146,6 @@ class Students(commands.Cog):
         await ctx.send(f'<@{ctx.author.id}>', embed=e)
 
 
-
 def setup(bot):
     students = Students(bot)
     bot.add_cog(students)

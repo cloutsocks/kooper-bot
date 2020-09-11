@@ -96,7 +96,7 @@ class Misc(commands.Cog):
         else:
 
             try:
-                await member.send(f'{msg}\n\n<:kooper:489893009228300303> *This message was delivered by the KO\_OP staff, but we will not be able to see any replies sent back here.*')
+                await member.send(f'{msg}\n\n<:kooper:489893009228300303> *This message was delivered by the {self.bot.guild} staff, but we will not be able to see any replies sent back here.*')
             except (discord.Forbidden, discord.NotFound, discord.HTTPException) as e:
                 await ctx.send(f'Could not message user. Error: {type(e).__name__}, {e}')
                 return

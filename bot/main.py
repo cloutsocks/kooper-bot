@@ -17,22 +17,12 @@ import checks
 # from one_shots.koop_misc import add_admin_holding_server
 # from one_shots.misc import tally_reactions
 
-exts = [
-    'common',
-    'error',
-    'config',
-    'misc',
-    'mod',
-    'actor',
-    'students'
-]
-
-
 def command_prefixes(bot, message):
     return bot.config['prefix']
 
 
 # invite https://discordapp.com/api/oauth2/authorize?client_id=ID&permissions=0&scope=bot
+# invite https://discordapp.com/api/oauth2/authorize?client_id=ID&permissions=2146827601&scope=bot
 
 class KooperBot(commands.Bot):
     def __init__(self):
@@ -50,7 +40,16 @@ class KooperBot(commands.Bot):
         self.wfr = {}
         self.wfm = {}
 
-        for extension in exts:
+        self.exts = [
+            'common',
+            'error',
+            'config',
+            'misc',
+            'mod',
+            'students'
+        ]
+
+        for extension in self.exts:
             self.load(extension)
 
     def clear_wait_fors(self, uid):
@@ -70,7 +69,6 @@ bot = KooperBot()
 # @bot.check
 # async def debug_restrict_jacob(ctx):
 #     return ctx.message.author.id == 232650437617123328 or ctx.message.author.id == 340838512834117632
-
 
 @bot.event
 async def on_ready():
@@ -92,7 +90,7 @@ async def on_ready():
 
     if bot.appeals_guild:
         print('Loading appeals cog')
-        exts.append('appeals')
+        bot.exts.append('appeals')
         bot.load('appeals')
 
     try:
@@ -102,8 +100,17 @@ async def on_ready():
 
     if bot.mail_guild:
         print('Loading mail cog')
-        exts.append('mail')
+        bot.exts.append('mail')
         bot.load('mail')
+
+    try:
+        bot.exts += bot.config['exts']
+        for ext in bot.config['exts']:
+            bot.load(ext)
+    except Exception:
+        pass
+
+    print(bot.exts)
 
     # await replace_underscores(bot)
     # await bot.mod.sync_bans()
@@ -152,7 +159,7 @@ async def on_message(message):
         await bot.process_commands(message)
         if uid in bot.wfm:
             waiter = bot.wfm[uid]
-            if waiter['channel'] != message.channel:
+            if 'channel' in waiter and waiter['channel'] != message.channel:
                 return
             try:
                 if time.time() > waiter['expires']:
@@ -177,7 +184,7 @@ async def _reloadall(ctx):
     bot.wfr = {}
 
     try:
-        for extension in exts:
+        for extension in bot.exts:
             bot.unload_extension(extension)
             bot.load_extension(extension)
     except Exception as e:
