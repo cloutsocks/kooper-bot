@@ -35,6 +35,23 @@ class Mail(commands.Cog):
 
     @checks.is_mod()
     @commands.command()
+    async def close(self, ctx):
+        category = self.bot.get_channel(self.bot.config['mail_category'])
+        if ctx.channel.category != category:
+            return
+
+        try:
+            uid = int(ctx.channel.topic)
+        except Exception:
+            return
+
+        if uid in self.user_channels_map:
+            del self.user_channels_map[uid]
+
+        await ctx.channel.delete()
+
+    @checks.is_mod()
+    @commands.command()
     async def mail(self, ctx, *, arg):
 
         category = self.bot.get_channel(self.bot.config['mail_category'])
@@ -58,7 +75,7 @@ class Mail(commands.Cog):
                 found = True
                 break
 
-        if channel is None:
+        if channel is None or self.bot.get_channel(channel.id) is None:
             channel = await self.bot.guild.create_text_channel(f'📨┊{str(member)}', category=category, topic=str(member.id))
             await channel.send(f'''## _Any messages sent here will be delivered to {member.mention} **unless** they start with a `.` or contain `##`. Message edits are **not** yet supported. If you do not get a ✅ reaction, your message was not delivered._
 -----''')
@@ -107,6 +124,9 @@ class Mail(commands.Cog):
                 self.user_channels_map[member.id] = (member, channel)
             else:
                 member, channel = self.user_channels_map[message.author.id]
+                if self.bot.get_channel(channel.id) is None:
+                    channel = await self.bot.guild.create_text_channel(f'📨┊{str(member)}', category=category, topic=str(member.id))
+                    self.user_channels_map[member.id] = (member, channel)
 
             webhook = await get_mail_hook(channel)
 
@@ -144,6 +164,9 @@ class Mail(commands.Cog):
             self.user_channels_map[member.id] = (member, channel)
         else:
             member, channel = self.user_channels_map[uid]
+            if self.bot.get_channel(channel.id) is None:
+                channel = await self.bot.guild.create_text_channel(f'📨┊{str(member)}', category=category, topic=str(member.id))
+                self.user_channels_map[member.id] = (member, channel)
 
         text = message.content
         links = '\n'.join([attachment.url for attachment in message.attachments])
@@ -177,13 +200,7 @@ class Mail(commands.Cog):
     #     if message.channel.name.startswith('✅┊'):
     #         await message.channel.edit(name=f'{message.channel.name[2:]}')
     #
-    # @checks.is_mod()
-    # @commands.command()
-    # async def close(self, ctx):
-    #     if ctx.guild != self.bot.mail_guild:
-    #         return
-    #
-    #     await ctx.channel.delete()
+
 
 
 def setup(bot):
