@@ -128,10 +128,10 @@ class Misc(commands.Cog):
     @commands.command()
     async def pet(self, ctx):
         if self.pets >= self.max_pets:
-            return await ctx.send(f'''_{self.bot.name} is all petted out and sleeping now._ <:kooper:489893009228300303>💤''')
+            return await ctx.send(f'''_{self.bot.user.name} is all petted out and sleeping now._ {self.bot.config['sleep_emoji']}''')
         self.pets += 1
 
-        if(random.random() < 0.05):
+        if self.bot.is_kooper() and random.random() < 0.05:
             await ctx.send('<:kooper:489893009228300303> 💨')
             await ctx.send('_Kooper merely farts._')
             return
@@ -183,7 +183,7 @@ class Misc(commands.Cog):
             d = now - d
             e.add_field(name=f'`{hash[:6]}`', value=f'''{simplify_timedelta(d)} ago\n{commit_msg} - {name}''', inline=False)
 
-        e.title = self.bot.name
+        e.title = self.bot.user.name
         e.color = 0xa991e8
         await ctx.send(embed=e)
 
