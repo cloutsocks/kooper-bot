@@ -79,7 +79,7 @@ class Mail(commands.Cog):
             overwrites = {
                 self.bot.guild.default_role: discord.PermissionOverwrite(read_messages=False)
             }
-            channel = await self.bot.guild.create_text_channel(f'📨┊{str(member)}', overwrites=overwrites, category=category, topic=str(member.id))
+            channel = await self.bot.guild.create_text_channel(f'📨┊{str(member)}', category=category, topic=str(member.id))
             await channel.send(f'''## _Any messages sent here will be delivered to {member.mention} **unless** they start with a `.` or contain `##`. Message edits are **not** yet supported. If you do not get a ✅ reaction, your message was not delivered._
 -----''')
 
@@ -125,14 +125,14 @@ class Mail(commands.Cog):
                         break
 
                 if channel is None:
-                    channel = await self.bot.guild.create_text_channel(f'📨┊{str(member)}', overwrites=overwrites, category=category,
+                    channel = await self.bot.guild.create_text_channel(f'📨┊{str(member)}', category=category,
                                                                        topic=str(member.id))
 
                 self.user_channels_map[member.id] = (member, channel)
             else:
                 member, channel = self.user_channels_map[message.author.id]
                 if self.bot.get_channel(channel.id) is None:
-                    channel = await self.bot.guild.create_text_channel(f'📨┊{str(member)}', overwrites=overwrites, category=category, topic=str(member.id))
+                    channel = await self.bot.guild.create_text_channel(f'📨┊{str(member)}', category=category, topic=str(member.id))
                     self.user_channels_map[member.id] = (member, channel)
 
             webhook = await get_mail_hook(channel)
@@ -172,7 +172,7 @@ class Mail(commands.Cog):
         else:
             member, channel = self.user_channels_map[uid]
             if self.bot.get_channel(channel.id) is None:
-                channel = await self.bot.guild.create_text_channel(f'📨┊{str(member)}', overwrites=overwrites, category=category, topic=str(member.id))
+                channel = await self.bot.guild.create_text_channel(f'📨┊{str(member)}', category=category, topic=str(member.id))
                 self.user_channels_map[member.id] = (member, channel)
 
         text = message.content
