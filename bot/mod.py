@@ -23,6 +23,25 @@ class Mod(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+        if self.bot.is_ready():
+            self.bot.loop.create_task(self.on_load())
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        await self.on_load()
+
+    async def on_load(self):
+        if 'mod_cn' in self.bot.config:
+            self.bot.mod_cn = self.bot.get_channel(self.bot.config['mod_cn'])
+
+        if 'log_cn' in self.bot.config:
+            self.bot.log_cn = self.bot.get_channel(self.bot.config['log_cn'])
+
+        if self.bot.is_kooper():
+            self.bot.slur_log_cn = self.bot.get_channel(720817629954179073)
+            self.bot.trotter_cn = self.bot.get_channel(727625945288016134)
+
+
     @commands.Cog.listener()
     async def on_message(self, message):
         if self.bot.is_kooper() and self.bot.guild is not None and message.guild == self.bot.guild:
@@ -40,7 +59,7 @@ class Mod(commands.Cog):
             created_ago = now - m.created_at
 
             if m.joined_at - m.created_at < timedelta(minutes=15):
-                await self.bot.get_channel(721827640570544208).send(f'🕑 **User joined within 15 minutes of making an account:**\n{m} / <@{m.id}>')
+                await self.bot.mod_cn.send(f'🕑 **User joined within 15 minutes of making an account:**\n{m} / <@{m.id}>')
 
     @checks.is_mod()
     @commands.command()
@@ -100,6 +119,10 @@ class Mod(commands.Cog):
 
         log_msg = await ctx.send(f'👟 {member_string} was __kicked__.')
         await self.bot.log_cn.send(f'👟\n {member_string} was __kicked__ by {ctx.author} for: `{msg}`\n\n Context: {log_msg.jump_url}')
+        try:
+            self.bot.notes.add_note(member, self.bot.user, ctx.guild, f'`.kick`ed by {ctx.author} for: `{msg}`')
+        except Exception:
+            pass
 
     @checks.is_mod()
     @commands.command()
@@ -141,6 +164,7 @@ class Mod(commands.Cog):
 
         if isinstance(member, discord.Object):
             member_string = f'<@{member.id}> / {member.id}'
+            u = None
             try:
                 u = await self.bot.fetch_user(member.id)
                 member_string = f'**{u}** / <@{u.id}> ({u.id})'
@@ -155,6 +179,11 @@ class Mod(commands.Cog):
                 log_msg = await ctx.send(f'🔨 [Off-server] {member_string} was **{verb}** and all of their messages sent within the past {days} days were deleted. They were not notified, as they are not on the server.')
                 await self.bot.log_cn.send(
                     f'🔨\n [Off-server] {member_string} was **{verb}** by {ctx.author} for: `{msg}`\n\nAll of their messages sent within the past {days} days were deleted. They were not notified, as they are not on the server. Context: {log_msg.jump_url}')
+                try:
+                    if u:
+                        self.bot.notes.add_note(u, self.bot.user, ctx.guild, f'`.ban`ned by {ctx.author} for: `{msg}`')
+                except Exception:
+                    pass
             return
 
         if hasattr(member, 'nick') and member.nick:
@@ -176,6 +205,10 @@ class Mod(commands.Cog):
         else:
             log_msg = await ctx.send(f'🔨 {member_string} was **{verb}** and all of their messages sent within the past {days} days were deleted.')
             await self.bot.log_cn.send(f'🔨\n {member_string} was **{verb}** by {ctx.author} for: `{msg}`\n\nAll of their messages sent within the past {days} days were deleted. Context: {log_msg.jump_url}')
+            try:
+                self.bot.notes.add_note(member, self.bot.user, ctx.guild, f'`.ban`ned by {ctx.author} for: `{msg}`')
+            except Exception:
+                pass
 
     @checks.is_mod()
     @commands.command()
@@ -192,6 +225,7 @@ class Mod(commands.Cog):
                 return
 
         member_string = f'<@{uid}> / {uid}'
+        u = None
         try:
             u = await self.bot.fetch_user(uid)
             member_string = f'**{u}** / <@{u.id}> ({u.id})'
@@ -205,6 +239,11 @@ class Mod(commands.Cog):
         else:
             log_msg = await ctx.send(f'🌈 {member_string} was **unbanned**, but they have not been notified of this.')
             await self.bot.log_cn.send(f'🌈\n {member_string} was **unbanned** by {ctx.author}, but they have not been notified of this. Context: {log_msg.jump_url}')
+            try:
+                if u:
+                    self.bot.notes.add_note(u, self.bot.user, ctx.guild, f'`.unban`ned by {ctx.author}')
+            except Exception:
+                pass
 
     @checks.is_jacob()
     @commands.command()
@@ -328,6 +367,10 @@ class Mod(commands.Cog):
             else:
                 await bot.slur_log_cn.send(f'👟 {member_string} was _kicked_ and told why. They can rejoin at any time.')
                 await bot.log_cn.send(f'👟\n {member_string} was _kicked_ via <#{bot.slur_log_cn.id}> and told why. They can rejoin at any time. Context: {log_msg.jump_url}')
+                try:
+                    bot.notes.add_note(message.author, bot.user, message.guild, f'Kicked via <#{bot.slur_log_cn.id}>')
+                except Exception:
+                    pass
             return
 
 
@@ -352,7 +395,10 @@ class Mod(commands.Cog):
                 f'🔨 {member_string} was _banned_ and all of their messages sent within the past {days} days were deleted. They were told why.')
             await bot.log_cn.send(
                 f'🔨\n {member_string} was _banned_ via <#{bot.slur_log_cn.id}> and all of their messages sent within the past {days} days were deleted. They were told why. Context: {log_msg.jump_url}')
-
+            try:
+                bot.notes.add_note(message.author, bot.user, message.guild, f'Banned via <#{bot.slur_log_cn.id}>')
+            except Exception:
+                pass
 
 def setup(bot):
     mod = Mod(bot)

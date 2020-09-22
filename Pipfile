@@ -10,6 +10,8 @@ discord-py = "*"
 pronouncing = "*"
 syllables = "*"
 unidecode = "*"
+pytz = "*"
+peewee = "*"
 
 [requires]
 python_version = "3.8"

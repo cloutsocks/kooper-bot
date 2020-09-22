@@ -65,7 +65,7 @@ class KooperBot(commands.Bot):
             traceback.print_exc()
             
     def is_kooper(self):
-        return self.guild == 546468613805309962
+        return self.guild is not None and self.guild.id == 372482304867827712
 
 
 bot = KooperBot()
@@ -76,16 +76,15 @@ bot = KooperBot()
 
 @bot.event
 async def on_ready():
-    print('Logged in as {0.user}'.format(bot))
+    print(f'Logged in as {bot.user}')
+    # todo move to config?
+    bot.guild = bot.get_guild(bot.config['guild'])
+    print(f'is_kooper: {bot.is_kooper()}')
+
     status = bot.config['playing']
     playing = discord.Game(name=status)
     await bot.change_presence(activity=playing)
-    # todo move to config?
-    bot.guild = bot.get_guild(bot.config['guild'])
-    bot.mod_cn = bot.get_channel(721827640570544208)
-    bot.log_cn = bot.get_channel(721345861333811300)
-    bot.slur_log_cn = bot.get_channel(720817629954179073)
-    bot.trotter_cn = bot.get_channel(727625945288016134)
+
 
     try:
         bot.appeals_guild = bot.get_guild(bot.config['appeals_guild'])
