@@ -115,13 +115,13 @@ _by **{note.by_handle.split('#')[0]}**, `{when} ago`_'''
         note_row.save()
 
     @checks.is_jacob()
-    @commands.command(name='pausenotes', aliases=['pausenote', 'notepause', 'notespause'])
+    @commands.command(name='pausenotes', aliases=['pausenote', 'notepause', 'notespause'], hidden=True)
     async def pause_notes(self, ctx):
         self.paused = not self.paused
         await ctx.send(f'`paused = {self.paused}`')
 
     @checks.is_jacob()
-    @commands.command()
+    @commands.command(hidden=True)
     async def make_notes_db(self, ctx):
         create_tables()
 
