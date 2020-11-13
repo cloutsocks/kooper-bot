@@ -40,6 +40,65 @@ GREEN_HEART = '💚'
 YELLOW_HEART = '💛'
 SPY_EMOJI = '🕵️'
 
+RAINBOW_PALETTE = (
+    # 🍂 Autumn
+    0xffb88c,
+
+    # 🍎 Red Apple
+    0xff9999,
+
+    # 🍒 Cherries
+    0xff6063,
+
+    # 🍓 Strawberry
+    0xfcbad3,
+
+    # 🌸 Cherry Blossom
+    0xf0cafc,
+
+    # 🌷 Lilac
+    0xa991e8,
+
+    # 🌠 Midnight
+    0x6772e5,
+
+    # ⛅ Blue Skies
+    0x99ccff,
+
+    # 🌿 Bluegrass
+    0x38b2a5,
+
+    # 🌱 Baby Mint
+    0x99ffdc,
+
+    # 🌲 Evergreen
+    0x62d2a2,
+
+    # 🍃 Spearmint
+    0x82ffb0,
+
+    # 🍌 Banana
+    0xffe676,
+
+    # 🐝 Bumblebee
+    0xffdd99,
+
+    # 🌻 Sunflower
+    0xffbb42,
+
+    # 🍊 Tangerine
+    0xff9e42,
+
+    # ☕ Espresso
+    0x9c6343,
+
+    # 🍫 Pain au Chocolat
+    0x8d6262,
+
+    # 🌙 Night
+    0x000000
+)
+
 
 
 def strip_extra(s):

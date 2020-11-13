@@ -12,6 +12,7 @@ syllables = "*"
 unidecode = "*"
 pytz = "*"
 peewee = "*"
+pillow = "*"
 
 [requires]
 python_version = "3.8"

@@ -61,6 +61,13 @@ class Misc(commands.Cog):
     async def repeat_embed(self, ctx, *, arg):
         await ctx.send(embed=discord.Embed(description=arg))
 
+    @checks.is_mod()
+    @commands.command(name='img')
+    async def repeat_img_embed(self, ctx, *, arg):
+        e = discord.Embed(description='text')
+        e.set_image(url=arg)
+        await ctx.send(embed=e)
+
     # @checks.is_mod()
     # @commands.command()
     # async def naomi(self, ctx, channel:discord.TextChannel, *, arg):

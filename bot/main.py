@@ -47,7 +47,7 @@ class KooperBot(commands.Bot):
             'config',
             'misc',
             'mod',
-            'students'
+            'students',
         ]
 
         for extension in self.exts:

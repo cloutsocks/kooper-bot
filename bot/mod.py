@@ -41,7 +41,6 @@ class Mod(commands.Cog):
             self.bot.slur_log_cn = self.bot.get_channel(720817629954179073)
             self.bot.trotter_cn = self.bot.get_channel(727625945288016134)
 
-
     @commands.Cog.listener()
     async def on_message(self, message):
         if self.bot.is_kooper() and self.bot.guild is not None and message.guild == self.bot.guild:
@@ -51,6 +50,10 @@ class Mod(commands.Cog):
     async def on_member_join(self, member):
         if member.guild == self.bot.guild:
             await self.join_check(member)
+
+    @commands.Cog.listener()
+    async def on_invite_create(self, invite):
+        await self.bot.mod_cn.send(f'📥 **Invite {self.bot.guild} created by {invite.inviter} / <@{invite.inviter.id}>**')
 
     async def join_check(self, m):
         if m.joined_at and m.created_at:
@@ -347,7 +350,7 @@ class Mod(commands.Cog):
             return reaction.message.id == log_msg.id and str(reaction.emoji) in ['👟'] + nums and user.guild_permissions.manage_guild and not user.bot
 
         try:
-            reaction, user = await self.bot.wait_for('reaction_add', timeout=60.0, check=check)
+            reaction, user = await self.bot.wait_for('reaction_add', timeout=None, check=check)
         except asyncio.TimeoutError:
             return
 
