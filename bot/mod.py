@@ -53,7 +53,8 @@ class Mod(commands.Cog):
 
     @commands.Cog.listener()
     async def on_invite_create(self, invite):
-        await self.bot.mod_cn.send(f'📥 **Invite {self.bot.guild} created by {invite.inviter} / <@{invite.inviter.id}>**')
+        if invite.guild == self.bot.guild:
+            await self.bot.mod_cn.send(f'📥 **New server invite created by {invite.inviter} / <@{invite.inviter.id}>**')
 
     async def join_check(self, m):
         if m.joined_at and m.created_at:
