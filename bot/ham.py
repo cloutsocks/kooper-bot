@@ -142,14 +142,14 @@ class Ham(commands.Cog):
             emotion = 1
             text = rest
 
-        def replace_channel_mentions(match):
-            channel_id = int(match.group(1))
-            cn = self.bot.get_channel(channel_id)
+        def replace_channel_mentions(m):
+            channel_id = int(m.group(1))
+            channel = self.bot.get_channel(channel_id)
 
-            if not isinstance(cn, discord.TextChannel):
-                return match.group(0)
+            if not isinstance(channel, discord.TextChannel):
+                return m.group(0)
 
-            return text.replace(match.group(0), cn.name)
+            return text.replace(m.group(0), '#' + channel.name)
 
         text = cn_id_pattern.sub(replace_channel_mentions, text)
 
