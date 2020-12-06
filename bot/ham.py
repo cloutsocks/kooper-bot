@@ -21,7 +21,7 @@ __ = '    \u200b'
 ARROW = '<:arrow:745744683040243782>'
 DEFAULT = 'hamtaro_000'
 
-HELP_MSG = '''.ham <name> <emotion> <text goes here>`
+HELP_MSG = '''`.ham <name> <emotion> <text goes here>`
 `<emotion>` can be a word (`blush`) or number (1 = smile, 6 = frown)
 single sprite hams don't need an emotion
 
