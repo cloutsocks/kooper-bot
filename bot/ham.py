@@ -97,6 +97,15 @@ class Ham(commands.Cog):
         e.set_image(url='https://i.imgur.com/WUVjWqb.png')
         await ctx.send(embed=e)
 
+    def replace_channel_mentions(self, m):
+        channel_id = int(m.group(1))
+        channel = self.bot.get_channel(channel_id)
+
+        if not isinstance(channel, discord.TextChannel):
+            return m.group(0)
+
+        return '*#' + channel.name + '*'
+
     @commands.command(aliases=['hamtaro'])
     async def ham(self, ctx, *, arg=''):
 
@@ -142,16 +151,7 @@ class Ham(commands.Cog):
             emotion = 1
             text = rest
 
-        def replace_channel_mentions(m):
-            channel_id = int(m.group(1))
-            channel = self.bot.get_channel(channel_id)
-
-            if not isinstance(channel, discord.TextChannel):
-                return m.group(0)
-
-            return text.replace(m.group(0), '#' + channel.name)
-
-        text = cn_id_pattern.sub(replace_channel_mentions, text)
+        text = cn_id_pattern.sub(self.replace_channel_mentions, text)
 
         # try:
         #     name, emotion, text = rest.split(' ', 2)
