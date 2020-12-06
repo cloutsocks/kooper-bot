@@ -108,12 +108,12 @@ class Ham(commands.Cog):
 
         cid = None
         cn = None
-        match = cn_id_pattern.search(arg)
+        match = cn_id_pattern.search(first)
         if match:
             cid = int(match.group(1))
         else:
             try:
-                cid = int(arg)
+                cid = int(first)
             except ValueError:
                 pass
 
