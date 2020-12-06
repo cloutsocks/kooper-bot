@@ -1,0 +1,47 @@
+`.ham <name> <emotion> <text goes here>`
+`<emotion>` can be a word (`blush`) or number (1 = smile, 6 = frown)
+single sprite hams don't need an emotion
+
+**characters**
+
+base emotions [1-10]: `smile` `smilesweat` `happy` `happysweat` `happycry` `frown` `frownsweat` `worry` `worrysweat` `cry`
+
+hamtaro: [base] `flatsweat` `flatsweat_worry` `ohno`
+boss: [base] `blush` `blush_sweat` `sob`
+oxnard: [base] `sparkle` `blush` `sob`
+bijou: [base] `blush` `happyblush` `wink` `ranger`
+pashmina: [base] `content` ranger`
+penelope: [base] `sob` `ranger`
+howdy: [base] `costume` `ranger`
+dexter: [base] `eyesshut` `eyesshutworry` `eyesshutsweat`
+stan: [base] `eyesshut` `eyesshutworry` `eyesshutsweat`
+maxwell: [base] `blush` `pointsweat` `point` `eyesshut` `eyesshutsweat` `winkleft` `winkright`
+sandy: [base] `blush` `blushcry` `tiredsweat` `back` `hold` `sad2` `happy2` `beam` `ranger`
+cappy: [base]
+panda: [base]
+princebo: [base] `sparkle` `sob`
+jingle: `smile` `happy` `happy2` `point` `eyesshut`
+sailor: `green` `blue` `mint` `yellow`
+
+
+**single sprite**
+_(no emotion needed)_
+
+snoozer, elder, championi, radar, marron, king, bronze, silver, lawyer, glasses, magician, omar, sparkle, drpeanut, seedric, announcer, carrobo, ice, lolly, tux, salia, postie, nerd, seamore, oshare, flora, ookook, sabu, stucky, auntieviv, tomyt, eggyp, sheriff, police, judo, ghost, news, girl, solara, angy, farmer, snorker, yell
+
+
+_for a list of generic colored/striped hamsters, type `.hams2`_
+
+
+--
+
+
+
+**generics**
+hamster: `gray` `orange` `mint` `brownpattern` `bluepattern` `ltbrownpattern` `greenpattern` `purplepattern` `purpleears` `yellowears` `pink` `cream` `dkorange` `violetpattern` `mintpattern` `pinkpattern` `rosepattern` `pinkbrownpattern` `pinkears` `mintears` `pigtails` `afro` `yellowbeard` `graybeard` `bluepattern2`
+
+round: `mint` `white` `brown` `brownpattern` `yellowpattern` `purplepattern` `bluepattern` `mosspattern` `pinkears` `whiteears` `violet` `green` `orange` `greenpattern` `ltbrownpattern` `graypattern` `dkbrownpattern` `orangepattern` `brownears` `blueears` `greyfrown` `greysad`
+
+small: `orange` `green` `brown` `orangepattern` `purplepattern` `brownpattern` `bluepattern` `yellowpattern` `greenears` `brownears` `white` `pink` `blue` `violetpattern` `greenpattern` `cyanpattern` `pinkpattern` `whitepattern` `orangeears` `pinkblack`
+
+old: `blue` `green` `orangepattern` `bluepattern` `brownpattern` `greenpattern` `yellowpattern` `blueears` `greenears`
