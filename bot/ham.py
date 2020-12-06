@@ -163,6 +163,7 @@ class Ham(commands.Cog):
 
         msg = ''
         if cn is not None and ctx.author.guild_permissions.manage_guild:
+            msg = '🐸 **staff message**'
             await ctx.message.add_reaction('✅')
         else:
             msg = f'{ctx.author.display_name}:'
