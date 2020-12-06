@@ -151,7 +151,7 @@ class Ham(commands.Cog):
 
             return text.replace(match.group(0), cn.name)
 
-        cn_id_pattern.sub(replace_channel_mentions, text)
+        text = cn_id_pattern.sub(replace_channel_mentions, text)
 
         # try:
         #     name, emotion, text = rest.split(' ', 2)
