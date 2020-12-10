@@ -26,7 +26,11 @@ def command_prefixes(bot, message):
 
 class KooperBot(commands.Bot):
     def __init__(self):
-        super().__init__(command_prefix=command_prefixes)
+
+        intents = discord.Intents.default()  # All but the two privileged ones
+        intents.members = True  # Subscribe to the Members intent
+
+        super().__init__(command_prefix=command_prefixes, intents=intents)
 
         # self.help_command = None
 
@@ -48,7 +52,7 @@ class KooperBot(commands.Bot):
             'misc',
             'mod',
             'students',
-            'ham'
+            'ham',
         ]
 
         for extension in self.exts:
