@@ -6,7 +6,7 @@ import traceback
 import datetime
 import asyncio
 import re
-
+import demoji
 import discord
 from discord.ext import commands
 
@@ -14,7 +14,7 @@ import checks
 
 # from one_shots.tally_meltans import tally, raffle, get_test_raid_members
 # from one_shots.wg_misc import add_role_to_everyone
-# from one_shots.koop_misc import add_admin_holding_server
+# from one_shots.koop_misc import add_role_to_everyone_before_minutes
 # from one_shots.misc import tally_reactions
 
 def command_prefixes(bot, message):
@@ -22,7 +22,7 @@ def command_prefixes(bot, message):
 
 
 # invite https://discordapp.com/api/oauth2/authorize?client_id=ID&permissions=0&scope=bot
-# invite https://discordapp.com/api/oauth2/authorize?client_id=ID&permissions=2146827601&scope=bot
+# invite https://discordapp.com/api/oauth2/authorize?client_id=ID&permissions=8&scope=bot
 
 class KooperBot(commands.Bot):
     def __init__(self):
@@ -31,6 +31,8 @@ class KooperBot(commands.Bot):
         intents.members = True  # Subscribe to the Members intent
 
         super().__init__(command_prefix=command_prefixes, intents=intents)
+
+        demoji.download_codes()
 
         # self.help_command = None
 
@@ -129,8 +131,10 @@ async def on_ready():
     # await raffle
     # await add_role_to_everyone(bot)
     # await bot.misc.band_test()
-    # print('Done')
     # await ohdear()
+    # await add_role_to_everyone_before_minutes(bot, 240)
+    # print('Done')
+
     # await make_holding_server(bot)
     # await add_admin_holding_server(bot)
     # await tally_reactions(bot, '🦆', 679078888575467530, 200)
@@ -142,7 +146,7 @@ async def handle(guild, member):
     await member.send("You have been banned as you are suspected to be a raider. If this was a mistake, reach out to one of us in the coming days.")
     await member.ban(reason="Suspected raider (Automatic)")
 
-
+#
 # async def ohdear():
 #     futures = []
 #     guild = bot.get_guild(372482304867827712)

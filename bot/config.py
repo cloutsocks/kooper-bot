@@ -16,7 +16,10 @@ def load_config(bot):
     # with open(os.environ.get('CONFIG_PATH', '../config/remote/config_kooper.json')) as f:
     # with open(os.environ.get('CONFIG_PATH', '../config/config_wg.json')) as f:
     # with open(os.environ.get('CONFIG_PATH', '../config/config_kooper.json')) as f:
-    with open(os.environ.get('CONFIG_PATH', '../config/config_toxel.json')) as f:
+    # with open(os.environ.get('CONFIG_PATH', '../config/config_toxel.json')) as f:
+    # with open(os.environ.get('CONFIG_PATH', '../config/remote/config_kyubey.json')) as f:
+    # with open(os.environ.get('CONFIG_PATH', '../config/config_kooper.json')) as f:
+    with open(os.environ.get('CONFIG_PATH', '../config/remote/config_rabbit.json')) as f:
 
         bot.config = json.load(f)
 

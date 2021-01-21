@@ -123,7 +123,7 @@ class Mail(commands.Cog):
                         channel = cn
                         found = True
                         break
-                        
+
                 if channel is None:
                     channel = await self.bot.guild.create_text_channel(f'📨┊{str(member)}', category=category,
                                                                        topic=str(member.id))

@@ -3,7 +3,7 @@ import random
 import re
 import os
 import subprocess
-
+import demoji
 import discord
 from discord.ext import commands
 
@@ -165,8 +165,8 @@ class Misc(commands.Cog):
     @commands.command()
     async def poll(self, ctx, *, arg):
         emoji = []
-        emoji = list(re.findall(emojiPattern, arg, flags=re.DOTALL)) + list(
-            re.findall(customEmojiPattern, arg, flags=re.DOTALL))
+        #emoji = list(re.findall(emojiPattern, arg, flags=re.DOTALL)) + list(re.findall(customEmojiPattern, arg, flags=re.DOTALL))
+        emoji = list(demoji.findall(arg).keys()) + list(re.findall(customEmojiPattern, arg, flags=re.DOTALL))
         msg = await ctx.send(f"**Poll time! <@{ctx.author.id}> asks:**\n{arg}")
         for reaction in emoji:
             await msg.add_reaction(reaction.strip('<> '))
