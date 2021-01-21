@@ -166,7 +166,7 @@ class Misc(commands.Cog):
     async def poll(self, ctx, *, arg):
         emoji = []
         #emoji = list(re.findall(emojiPattern, arg, flags=re.DOTALL)) + list(re.findall(customEmojiPattern, arg, flags=re.DOTALL))
-        emoji = list(demoji.findall(arg).keys()) + list(re.findall(customEmojiPattern, arg, flags=re.DOTALL))
+        emoji = demoji.findall_list(arg, desc=False) + list(re.findall(customEmojiPattern, arg, flags=re.DOTALL))
         msg = await ctx.send(f"**Poll time! <@{ctx.author.id}> asks:**\n{arg}")
         for reaction in emoji:
             await msg.add_reaction(reaction.strip('<> '))
