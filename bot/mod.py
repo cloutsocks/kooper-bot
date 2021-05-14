@@ -65,6 +65,12 @@ class Mod(commands.Cog):
             if m.joined_at - m.created_at < timedelta(minutes=15):
                 await self.bot.mod_cn.send(f'🕑 **User joined within 15 minutes of making an account:**\n{m} / <@{m.id}>')
 
+    @commands.Cog.listener()
+    async def on_member_update(self, before, after):
+        if member.guild == self.bot.guild:
+            if after.nickname != old.nickname:
+                await self.bot.mod_cn.send(f'⚠ **Nickname change by {after} / <@{after.id}>**\n{before.nickname} -> {after.nickname}')
+
     @checks.is_mod()
     @commands.command()
     async def whois(self, ctx, *, arg):
