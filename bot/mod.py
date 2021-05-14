@@ -54,8 +54,7 @@ class Mod(commands.Cog):
     @commands.Cog.listener()
     async def on_invite_create(self, invite):
         if invite.guild == self.bot.guild:
-            cn = self.bot.slur_log_cn if self.bot.is_kooper() else self.bot.mod_cn
-            await cn.send(f'📥 **New server invite created by {invite.inviter} / <@{invite.inviter.id}>**')
+            await self.bot.mod_cn.send(f'📥 **New server invite created by {invite.inviter} / <@{invite.inviter.id}>**')
 
     async def join_check(self, m):
         if m.joined_at and m.created_at:
@@ -70,7 +69,8 @@ class Mod(commands.Cog):
     async def on_member_update(self, before, after):
         if after.guild == self.bot.guild:
             if after.nick != before.nick:
-                await self.bot.mod_cn.send(f'⚠ **Nickname change by {after} / <@{after.id}>**\n{before.nick} -> {after.nick}')
+                cn = self.bot.slur_log_cn if self.bot.is_kooper() else self.bot.mod_cn
+                await cn.send(f'⚠ **Nickname change by {after} / <@{after.id}>**\n{before.nick} -> {after.nick}')
 
     @checks.is_mod()
     @commands.command()
