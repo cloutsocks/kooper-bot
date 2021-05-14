@@ -68,7 +68,7 @@ class Mod(commands.Cog):
     @commands.Cog.listener()
     async def on_member_update(self, before, after):
         if after.guild == self.bot.guild:
-            if after.nick != old.nick:
+            if after.nick != before.nick:
                 await self.bot.mod_cn.send(f'⚠ **Nickname change by {after} / <@{after.id}>**\n{before.nick} -> {after.nick}')
 
     @checks.is_mod()
