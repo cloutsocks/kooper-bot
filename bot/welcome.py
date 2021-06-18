@@ -56,8 +56,8 @@ class Welcome(commands.Cog):
             await self.bot.mod_cn.send(f'❌ **Could not load the welcome message, so none was sent to recent join!**')
             return
 
-        if member.guild == self.bot.guild and member.id == 340838512834117632:
-            await self.send_mesage(member)
+        if member.guild == self.bot.guild:
+            await self.send_message(member)
 
 
     @commands.Cog.listener()
