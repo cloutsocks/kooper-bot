@@ -24,7 +24,7 @@ class Welcome(commands.Cog):
         except KeyError:
             pass
 
-        gc = gspread.service_account(filename='../config/service_account.json')
+        gc = gspread.service_account(filename='config/service_account.json')
         spreadsheet = gc.open_by_key(self.bot.config['sheets']['data'])
         sheet = spreadsheet.worksheet('welcome_message')
         lines = sheet.col_values(1)
