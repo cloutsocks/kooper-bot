@@ -14,15 +14,14 @@ import checks
 
 # from one_shots.tally_meltans import tally, raffle, get_test_raid_members
 # from one_shots.wg_misc import add_role_to_everyone
-# from one_shots.koop_misc import add_role_to_everyone_before_minutes
 # from one_shots.misc import tally_reactions
+# from one_shots.koop_misc import add_role_to_everyone
 
 def command_prefixes(bot, message):
     return bot.config['prefix']
 
 
 # invite https://discordapp.com/api/oauth2/authorize?client_id=ID&permissions=0&scope=bot
-# invite https://discordapp.com/api/oauth2/authorize?client_id=ID&permissions=8&scope=bot
 
 class KooperBot(commands.Bot):
     def __init__(self):
@@ -51,6 +50,7 @@ class KooperBot(commands.Bot):
             'common',
             'error',
             'config',
+            'admin',
             'misc',
             'mod',
             'students',
@@ -72,7 +72,7 @@ class KooperBot(commands.Bot):
             traceback.print_exc()
             
     def is_kooper(self):
-        return self.guild is not None and self.guild.id == 372482304867827712
+        return self.guild is not None and self.guild.id == 372482304867827712 and self.user.id == 715609234561302571
 
 
 bot = KooperBot()
@@ -84,7 +84,6 @@ bot = KooperBot()
 @bot.event
 async def on_ready():
     print(f'Logged in as {bot.user}')
-    # todo move to config?
     bot.guild = bot.get_guild(bot.config['guild'])
     print(f'is_kooper: {bot.is_kooper()}')
 
@@ -183,26 +182,6 @@ async def on_message(message):
             await waiter['handler'].handle_message(message)
 
 
-
-@bot.command(name='reloadall', aliases=['reall', 'ra', 'rk'])
-@checks.is_jacob()
-async def _reloadall(ctx):
-    """Reloads all modules."""
-
-    # if bot.config.get('disable_hot_reload', True):
-    #     return
-
-    bot.wfm = {}
-    bot.wfr = {}
-
-    try:
-        for extension in bot.exts:
-            bot.unload_extension(extension)
-            bot.load_extension(extension)
-    except Exception as e:
-        await ctx.send(f'```py\n{traceback.format_exc()}\n```')
-    else:
-        await ctx.send('✅')
 
 
 print('Starting')

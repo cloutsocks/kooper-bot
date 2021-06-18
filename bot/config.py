@@ -15,25 +15,16 @@ def load_config(bot):
 
     # with open(os.environ.get('CONFIG_PATH', '../config/remote/config_kooper.json')) as f:
     # with open(os.environ.get('CONFIG_PATH', '../config/config_wg.json')) as f:
-    # with open(os.environ.get('CONFIG_PATH', '../config/config_kooper.json')) as f:
-    # with open(os.environ.get('CONFIG_PATH', '../config/config_toxel.json')) as f:
-    # with open(os.environ.get('CONFIG_PATH', '../config/remote/config_kyubey.json')) as f:
-    # with open(os.environ.get('CONFIG_PATH', '../config/config_kooper.json')) as f:
-    with open(os.environ.get('CONFIG_PATH', '../config/remote/config_rabbit.json')) as f:
-
+    with open(os.environ.get('CONFIG_PATH', '../config/config_kooper.json')) as f:
         bot.config = json.load(f)
 
-        for key in ['guild', 'appeals_guild', 'mail_category', 'mod_cn', 'log_cn']:
-            try:
-                bot.config[key] = int(bot.config[key])
-            except Exception:
-                pass
+        for key in bot.config:
+            if type(bot.config[key]) is str:
+                if re.match(r'\d+$', bot.config[key]):
+                    bot.config[key] = int(bot.config[key])
 
-        for key in ['creator_ids', 'admin_ids', 'actor_ids']:
-            try:
-                bot.config[key] = [int(val) for val in bot.config[key]]
-            except Exception:
-                pass
+            if type(bot.config[key]) is list:
+                bot.config[key] = [int(val) if re.match(r'\d+$', val) else val for val in bot.config[key]]
 
 
 class Config(commands.Cog):

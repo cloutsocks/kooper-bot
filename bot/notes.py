@@ -6,7 +6,7 @@ import time
 import pytz
 
 from discord.ext import commands
-from common import whois_text, find_members, send_message, get_member_or_search, idPattern, DBL_BREAK, FIELD_BREAK, simplify_timedelta
+from common import whois_text, find_members, send_message, get_member_or_search, id_pattern, DBL_BREAK, FIELD_BREAK, simplify_timedelta
 
 from peewee import *
 from datetime import datetime

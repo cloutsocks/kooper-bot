@@ -8,7 +8,7 @@ import discord
 from pprint import pprint
 from datetime import datetime, timedelta
 
-idPattern = re.compile(r'<@!?(\d+?)>')
+id_pattern = re.compile(r'<@!?(\d+?)>')
 cn_id_pattern = re.compile(r'<#([0-9]+)>')
 emojiPattern = u'(?:[\U00002600-\U000027BF])|(?:[\U0001f300-\U0001f64F])|(?:[\U0001f680-\U0001f6FF])'
 customEmojiPattern = r'<.?:(?:.+?):(?:\d+?)>'
@@ -150,7 +150,7 @@ async def find_members(bot, server, query, get_ids=False, use_hackban=False):
     if match:
         uid = int(match.group(0))
 
-    match = idPattern.search(query)
+    match = id_pattern.search(query)
     if match:
         uid = int(match.group(1))
 
@@ -289,10 +289,18 @@ def print_error(ctx, error):
     print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
     traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 
+emoji_markup = re.compile(r'{(\w+?)}')
+
+def apply_emoji(bot, text):
+    for match in re.finditer(emoji_markup, text):
+        try:
+            emoji = bot.config['emoji'][match.group(1)]
+        except KeyError:
+            continue
+
+        text = text.replace(match.group(0), emoji)
+
+    return text
 
 def setup(bot):
     pass
-
-
-
-

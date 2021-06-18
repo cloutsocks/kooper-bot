@@ -8,7 +8,7 @@ import discord
 from discord.ext import commands
 
 from datetime import datetime, timedelta
-from common import send_message, idPattern, get_member_or_search, emojiPattern, customEmojiPattern, simplify_timedelta
+from common import send_message, id_pattern, get_member_or_search, emojiPattern, customEmojiPattern, simplify_timedelta
 
 import checks
 
@@ -134,6 +134,10 @@ class Misc(commands.Cog):
 
     @commands.command()
     async def pet(self, ctx):
+        if 'pet_emoji' not in self.bot.config or self.bot.is_kooper():
+            return
+
+
         if self.pets >= self.max_pets:
             return await ctx.send(f'''_{self.bot.user.name} is all petted out and sleeping now._ {self.bot.config['sleep_emoji']}''')
         self.pets += 1
@@ -164,12 +168,25 @@ class Misc(commands.Cog):
 
     @commands.command()
     async def poll(self, ctx, *, arg):
-        emoji = []
-        #emoji = list(re.findall(emojiPattern, arg, flags=re.DOTALL)) + list(re.findall(customEmojiPattern, arg, flags=re.DOTALL))
         emoji = demoji.findall_list(arg, desc=False) + list(re.findall(customEmojiPattern, arg, flags=re.DOTALL))
         msg = await ctx.send(f"**Poll time! <@{ctx.author.id}> asks:**\n{arg}")
         for reaction in emoji:
             await msg.add_reaction(reaction.strip('<> '))
+
+    @checks.is_bot_admin()
+    @commands.command(name='addreaction')
+    async def add_reaction(self, ctx, cn_id: int, msg_id: int, emoji):
+        try:
+            channel = self.bot.get_channel(cn_id)
+            msg = await channel.fetch_message(msg_id)
+            emoji = demoji.findall_list(emoji, desc=False) + list(re.findall(customEmojiPattern, emoji, flags=re.DOTALL))
+            for reaction in emoji:
+                await msg.add_reaction(reaction.strip('<> '))
+
+        except Exception as e:
+            await ctx.send(f'Could not add reaction. Error: {type(e).__name__}, {e}')
+        else:
+            await ctx.message.add_reaction('✅')
 
     @checks.is_bot_admin()
     @commands.command(aliases=['git', 'v', 'ver', 'stats'])

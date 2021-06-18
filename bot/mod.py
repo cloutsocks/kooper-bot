@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 
 import discord
 from discord.ext import commands
-from common import whois_text, find_members, send_message, get_member_or_search, idPattern, DBL_BREAK, FIELD_BREAK
+from common import whois_text, find_members, send_message, get_member_or_search, id_pattern, DBL_BREAK, FIELD_BREAK
 
 import checks
 
@@ -225,7 +225,7 @@ class Mod(commands.Cog):
     @commands.command()
     async def unban(self, ctx, *, arg):
 
-        match = idPattern.search(arg)
+        match = id_pattern.search(arg)
         if match:
             uid = int(match.group(1))
         else:
