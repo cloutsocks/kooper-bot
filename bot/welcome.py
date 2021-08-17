@@ -37,8 +37,7 @@ class Welcome(commands.Cog):
             if len(msg) + len(line) > 1990:
                 self.welcome_text.append(msg)
                 msg = ''
-            else:
-                msg += line + '\n'
+            msg += line + '\n'
 
         if msg:
             self.welcome_text.append(msg)
