@@ -110,14 +110,13 @@ class Mail(commands.Cog):
             applications_category = self.bot.get_channel(self.bot.config['applications_category'])
             member_role = self.bot.guild.get_role(self.bot.config['member_role_id'])
 
-        is_application = False
+        # is_application = False
         category = mail_category = self.bot.get_channel(self.bot.config['mail_category'])
         emoji = '📨'
 
         overwrites = {
             self.bot.guild.default_role: discord.PermissionOverwrite(read_messages=False)
         }
-        is_application
         '''
         dm from user
         '''
@@ -129,10 +128,10 @@ class Mail(commands.Cog):
                 if member is None:
                     return
 
-                if member_role is not None and member_role not in member.roles:
-                    is_application = True
-                    category = applications_category
-                    emoji = '🌱'
+                # if member_role is not None and member_role not in member.roles:
+                #     is_application = True
+                #     category = applications_category
+                #     emoji = '🌱'
 
                 for cn in category.text_channels:
                     try:
@@ -148,22 +147,22 @@ class Mail(commands.Cog):
                 if channel is None:
                     channel = await self.bot.guild.create_text_channel(f'{emoji}┊{str(member)}', category=category,
                                                                        topic=str(member.id))
-                    if is_application:
-                        if hasattr(member, 'nick') and member.nick:
-                            member_string = f'**{member}** aka **{member.nick}** / <@{member.id}> ({member.id})'
-                        else:
-                            member_string = f'**{member}** / <@{member.id}> ({member.id})'
-
-                        await channel.send(f'''🌱 New application from {member_string}\nReact with a {APPROVE_EMOJI} to any message from them to approve them as members (equivalent to, they receive the `Member` role).''')
+                    # if is_application:
+                    #     if hasattr(member, 'nick') and member.nick:
+                    #         member_string = f'**{member}** aka **{member.nick}** / <@{member.id}> ({member.id})'
+                    #     else:
+                    #         member_string = f'**{member}** / <@{member.id}> ({member.id})'
+                    #
+                    #     await channel.send(f'''🌱 New application from {member_string}\nReact with a {APPROVE_EMOJI} to any message from them to approve them as members (equivalent to, they receive the `Member` role).''')
 
                 self.user_channels_map[member.id] = (member, channel)
             else:
                 member, channel = self.user_channels_map[message.author.id]
                 if self.bot.get_channel(channel.id) is None:
-                    if member_role is not None and member_role not in member.roles:
-                        is_application = True
-                        category = applications_category
-                        emoji = '🌱'
+                    # if member_role is not None and member_role not in member.roles:
+                    #     is_application = True
+                    #     category = applications_category
+                    #     emoji = '🌱'
 
                     channel = await self.bot.guild.create_text_channel(f'{emoji}┊{str(member)}', category=category, topic=str(member.id))
                     self.user_channels_map[member.id] = (member, channel)
@@ -176,8 +175,8 @@ class Mail(commands.Cog):
                 text = text + '\n' + links
 
             replicated_message = await webhook.send(text, username=member.name, avatar_url=member.avatar_url, wait=True)
-            if is_application:
-                await replicated_message.add_reaction(APPROVE_EMOJI)
+            # if is_application:
+            #     await replicated_message.add_reaction(APPROVE_EMOJI)
 
             # await channel.send(f'**{member}**: {message.content}')
             await message.add_reaction('✅')

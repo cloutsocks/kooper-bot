@@ -49,52 +49,52 @@ class Welcome(commands.Cog):
             except Exception:
                 pass
 
-    @commands.Cog.listener()
-    async def on_member_join(self, member):
-        if not self.welcome_text:
-            await self.bot.mod_cn.send(f'❌ **Could not load the welcome message, so none was sent to recent join!**')
-            return
-
-        if member.guild == self.bot.guild:
-            await self.send_message(member)
-
-
-    @commands.Cog.listener()
-    async def on_raw_reaction_add(self, payload):
-        await self.reaction_action('add', payload)
-
-    async def reaction_action(self, action, payload):
-
-        if action != 'add':
-            return
-
-        if not self.waiting_cn:
-            return
-
-        if payload.user_id == self.bot.user.id:
-            return
-
-        channel = self.bot.get_channel(payload.channel_id)
-        if channel != self.waiting_cn:
-            return
-
-        member = self.bot.guild.get_member(payload.user_id)
-        if member is None:
-            return
-
-        try:
-            message = self.msg_cache[payload.message_id]
-        except KeyError:
-            message = await channel.fetch_message(payload.message_id)
-            self.msg_cache[payload.message_id] = message
-
-        await message.remove_reaction(payload.emoji, member)
-
-        emoji = str(payload.emoji)
-        if emoji != '♻️':
-            return
-
-        await self.send_message(member)
+    # @commands.Cog.listener()
+    # async def on_member_join(self, member):
+    #     if not self.welcome_text:
+    #         await self.bot.mod_cn.send(f'❌ **Could not load the welcome message, so none was sent to recent join!**')
+    #         return
+    #
+    #     if member.guild == self.bot.guild:
+    #         await self.send_message(member)
+    #
+    #
+    # @commands.Cog.listener()
+    # async def on_raw_reaction_add(self, payload):
+    #     await self.reaction_action('add', payload)
+    #
+    # async def reaction_action(self, action, payload):
+    #
+    #     if action != 'add':
+    #         return
+    #
+    #     if not self.waiting_cn:
+    #         return
+    #
+    #     if payload.user_id == self.bot.user.id:
+    #         return
+    #
+    #     channel = self.bot.get_channel(payload.channel_id)
+    #     if channel != self.waiting_cn:
+    #         return
+    #
+    #     member = self.bot.guild.get_member(payload.user_id)
+    #     if member is None:
+    #         return
+    #
+    #     try:
+    #         message = self.msg_cache[payload.message_id]
+    #     except KeyError:
+    #         message = await channel.fetch_message(payload.message_id)
+    #         self.msg_cache[payload.message_id] = message
+    #
+    #     await message.remove_reaction(payload.emoji, member)
+    #
+    #     emoji = str(payload.emoji)
+    #     if emoji != '♻️':
+    #         return
+    #
+    #     await self.send_message(member)
 
 
 def setup(bot):
